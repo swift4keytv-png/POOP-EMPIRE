@@ -1,0 +1,31 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Партнёры и фотографии руководства</h1>
+{% for person in people %}
+<form method="post" enctype="multipart/form-data" class="stack admin-card">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="id" value="{{ person.id }}">
+    {% if person.photo %}<img class="admin-photo" src="{{ url_for('static', filename=person.photo) }}" alt="">{% endif %}
+    <label>Имя<input name="name" value="{{ person.name }}"></label>
+    <label>Должность<input name="title" value="{{ person.title }}"></label>
+    <label>Роль<textarea name="role">{{ person.role }}</textarea></label>
+    <label>Биография<textarea name="bio">{{ person.bio }}</textarea></label>
+    <label>Шутка<textarea name="joke">{{ person.joke }}</textarea></label>
+    <label>Новое фото<input type="file" name="photo" accept="image/*"></label>
+    <label><input type="checkbox" name="active" value="1" {% if person.is_active %}checked{% endif %}> Показывать</label>
+    <button class="btn" type="submit">Сохранить</button>
+</form>
+{% endfor %}
+<h2>Новый партнёр</h2>
+<form method="post" enctype="multipart/form-data" class="stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Адрес страницы<input name="slug" required placeholder="novyj"></label>
+    <label>Имя<input name="name" required></label>
+    <label>Должность<input name="title"></label>
+    <label>Роль<textarea name="role"></textarea></label>
+    <label>Биография<textarea name="bio"></textarea></label>
+    <label>Фото<input type="file" name="photo" accept="image/*"></label>
+    <label><input type="checkbox" name="active" value="1" checked> Показывать</label>
+    <button class="btn btn-gold" type="submit">Добавить</button>
+</form>
+{% endblock %}

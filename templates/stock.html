@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}{{ company.ticker }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/group.css') }}">{% endblock %}
+{% block content %}
+<section class="wrap universe">
+    <p class="eyebrow">DEMO · {{ company.ticker }}</p>
+    <h1>{{ company.name }}</h1>
+    <p>{{ company.summary }} Цена {{ company.price_kop|money }}. Капитализация {{ company.cap_rub|rubbig }}.</p>
+    <canvas id="one" height="120"></canvas>
+    {% if current_user.is_authenticated %}
+    <button type="button" data-buy="{{ company.ticker }}">Купить 1</button>
+    <button type="button" data-sell="{{ company.ticker }}">Продать 1</button>
+    <p data-balance>Баланс {{ current_user.invest_kop|money }}</p>
+    {% else %}
+    <p><a href="{{ url_for('auth.login', next='/exchange/' + company.ticker) }}">Войдите, чтобы торговать виртуально</a></p>
+    {% endif %}
+    <p><a href="{{ url_for('group.company', slug=company.slug) }}">Страница компании</a> · <a href="{{ url_for('group.exchange') }}">К списку</a></p>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+<script>
+const ctx = document.getElementById("one");
+const chart = new Chart(ctx, { type: "line", data: { labels: {{ chart|tojson }}.map((_, i) => i + 1), datasets: [{ data: {{ chart|tojson }}, borderColor: "#c9a227", tension: 0.25, pointRadius: 0 }] }, options: { plugins: { legend: { display: false } } } });
+document.querySelectorAll("[data-buy],[data-sell]").forEach((button) => {
+    button.addEventListener("click", async () => {
+        const side = button.dataset.buy ? "buy" : "sell";
+        const ticker = button.dataset.buy || button.dataset.sell;
+        const response = await fetch("/api/exchange/trade", { method: "POST", headers: { "Content-Type": "application/json", "X-CSRFToken": document.querySelector('meta[name="csrf-token"]').content }, body: JSON.stringify({ ticker, side, qty: 1 }) });
+        const data = await response.json();
+        const note = document.querySelector("[data-balance]");
+        if (note) note.textContent = data.ok ? "Баланс обновлён, акций: " + data.shares : (data.error || "Сделка не прошла");
+    });
+});
+setInterval(async () => {
+    const response = await fetch("/api/exchange/quotes?ticker={{ company.ticker }}");
+    const data = await response.json();
+    chart.data.datasets[0].data = data.history;
+    chart.data.labels = data.history.map((_, i) => i + 1);
+    chart.update();
+}, 20000);
+</script>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Товары</h1>
+<table>
+    <thead><tr><th>Артикул</th><th>Название</th><th>Цена</th><th>Склад</th><th>Флаги</th></tr></thead>
+    <tbody>
+    {% for item in products %}
+    <tr>
+        <td>{{ item.sku }}</td>
+        <td colspan="4">
+            <form method="post" class="admin-line">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="id" value="{{ item.id }}">
+                <input name="name" value="{{ item.name }}">
+                <input name="price" value="{{ '%.2f'|format(item.price_kop / 100) }}">
+                <input name="stock" type="number" value="{{ item.stock }}">
+                <label><input type="checkbox" name="active" value="1" {% if item.is_active %}checked{% endif %}> витрина</label>
+                <label><input type="checkbox" name="purchasable" value="1" {% if item.purchasable %}checked{% endif %}> можно купить</label>
+                <label><input type="checkbox" name="featured" value="1" {% if item.is_featured %}checked{% endif %}> на главной</label>
+                <button class="btn" type="submit">Сохранить</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

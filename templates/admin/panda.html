@@ -1,0 +1,28 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>База панды штаба</h1>
+<p>Панда ищет эти слова в вопросе. Ответ не уходит во внешнюю модель.</p>
+{% for row in facts %}
+<form method="post" class="stack admin-card">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="id" value="{{ row.id }}">
+    <input name="company" value="{{ row.company_slug }}" placeholder="компания">
+    <input name="keys" value="{{ row.keys }}" placeholder="слова через запятую">
+    <textarea name="answer">{{ row.answer }}</textarea>
+    <input name="link" value="{{ row.link }}" placeholder="/company/slug">
+    <input name="label" value="{{ row.link_label }}" placeholder="текст ссылки">
+    <button class="btn" type="submit">Сохранить</button>
+    <button class="btn" name="delete" value="1" type="submit">Удалить</button>
+</form>
+{% endfor %}
+<h2>Новая запись</h2>
+<form method="post" class="stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input name="company" placeholder="компания">
+    <input name="keys" placeholder="слова через запятую" required>
+    <textarea name="answer" required></textarea>
+    <input name="link" placeholder="/path">
+    <input name="label" placeholder="ссылка">
+    <button class="btn btn-gold" type="submit">Добавить</button>
+</form>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ person.name }}{% endblock %}
+{% block content %}
+<article class="wrap profile">
+    <img src="{{ url_for('static', filename=person.photo) }}" alt="{{ person.name }}">
+    <div>
+        <p class="eyebrow">{{ person.title }}</p>
+        <h1>{{ person.name }}</h1>
+        <h2>Роль в корпорации</h2>
+        <p>{{ person.role|nl2br }}</p>
+        <h2>Биография</h2>
+        <p>{{ person.bio|nl2br }}</p>
+        {% if person.joke %}
+        <h2>Фирменная черта</h2>
+        <blockquote>{{ person.joke }}</blockquote>
+        {% endif %}
+        {% if person.slug == 'sergey' %}
+        <img src="{{ url_for('static', filename='images/sergo-energy.jpg') }}" alt="Серго-энергетик">
+        <p>Этот кадр — образ банок SERGO ENERGY, не замена портрета выше.</p>
+        {% elif person.slug == 'ruslan' %}
+        <p><a href="{{ url_for('group.holding') }}">Схема холдинга</a> · <a href="{{ url_for('group.dream') }}">Мечта: Xiaomi 17T Pro</a></p>
+        {% endif %}
+        {% for href, label in links %}
+        <p><a class="btn btn-gold" href="{{ href }}">Перейти к компании · {{ label }}</a></p>
+        {% endfor %}
+    </div>
+</article>
+{% endblock %}

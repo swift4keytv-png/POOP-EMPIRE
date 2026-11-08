@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% block title %}{{ company.name }}{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/group.css') }}">
+{% if company.slug == 'gorilla' %}<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">{% endif %}
+{% endblock %}
+{% block content %}
+<article class="wrap universe theme-{{ company.theme }}">
+    <p class="eyebrow">POOP EMPIRE GROUP · DEMO</p>
+    <div class="company-hero">
+        {% if company.boss_photo %}
+        <img src="{{ url_for('static', filename=company.boss_photo) }}" alt="{{ company.boss }}">
+        {% endif %}
+        <div>
+            <p class="ticker">{{ company.ticker }}</p>
+            <h1>{{ company.name }}</h1>
+            <p>{{ company.tagline }}</p>
+            <p>{{ company.story }}</p>
+        </div>
+    </div>
+    <div class="figures">
+        <article class="figure fiction"><small>DEMO · капитализация</small><strong>{{ company.cap_rub|rubbig }}</strong></article>
+        <article class="figure fiction"><small>DEMO · выручка легенды</small><strong>{{ company.revenue_demo|rubbig }}</strong></article>
+        <article class="figure fiction"><small>DEMO · люди</small><strong data-count="{{ company.staff }}">{{ company.staff }}</strong></article>
+        <article class="figure fiction"><small>DEMO · площадки</small><strong>{{ company.sites }}</strong></article>
+    </div>
+    {% if company.slug == 'gorilla' %}
+    <section class="war-map">
+        <h2>Игровая карта влияния</h2>
+        <p>Условные споры какашечных корпораций. Не военная обстановка и не инструкция.</p>
+        <div id="war-map" class="russia-map"></div>
+        <ul class="war-feed">
+            <li>Гориллы Радмира укрепили табличку на вымышленном заводе.</li>
+            <li>Конкурирующая корпорация потеряла склад в легенде.</li>
+            <li>GORILLA SQUAD нарисована у нового цеха.</li>
+            <li>POOP EMPIRE расширяет промышленное влияние на схеме.</li>
+        </ul>
+        <div class="zone-card" data-zone-card hidden></div>
+    </section>
+    {% elif company.slug == 'poop-delivery' %}
+    <section>
+        <h2>Служба курьеров</h2>
+        <div class="news-list">
+        {% for row in couriers %}
+            <article class="card"><strong>{{ row.mark }} {{ row.name }} «{{ row.nickname }}»</strong><p>{{ row.specialty }} · {{ row.status }} · {{ row.eta }}</p><p>{{ row.bio }}</p></article>
+        {% endfor %}
+        </div>
+        <p><a class="btn" href="{{ url_for('main.delivery') }}">Условия доставки и самовывоз</a></p>
+    </section>
+    {% elif company.slug == 'poop-airlines' %}
+    <section>
+        <h2>Авиапарк DEMO</h2>
+        <div class="grid-4">
+        {% for plane in planes %}
+            <button type="button" class="card plane" data-plane data-name="{{ plane.name }}" data-model="{{ plane.model }}" data-tail="{{ plane.tail }}" data-seats="{{ plane.seats }}" data-status="{{ plane.status }}" data-note="{{ plane.note }}">
+                <strong>{{ plane.name }}</strong><p>{{ plane.model }} · {{ plane.tail }} · мест {{ plane.seats }}</p><p>{{ plane.status }}</p>
+            </button>
+        {% endfor %}
+        <p data-plane-card>Нажмите борт, чтобы открыть карточку. Это DEMO, рейса в воздух нет.</p>
+        </div>
+        <h2>Классы и услуги · DEMO</h2>
+        <div class="grid-4">
+            <article class="card"><strong>Имперский</strong><p>Кресло у окна на схеме. Билет не продаётся.</p></article>
+            <article class="card"><strong>Золотой</strong><p>Питание из легенды SERGO ENERGY.</p></article>
+            <article class="card"><strong>Груз</strong><p>SHMILEON CARGO возит банки на бумаге.</p></article>
+            <article class="card"><strong>Аэропорты</strong><p>Уфа, Казань, Москва, Сочи, Владивосток, Новосибирск, Санкт-Петербург. Всё DEMO.</p></article>
+        </div>
+        <h2>Маршруты</h2>
+        <label>Поиск <input data-route-find placeholder="город"></label>
+        <div class="route-list">
+        {% for route in routes %}
+            <button type="button" class="card" data-route data-note="{{ route.note }}" data-status="{{ route.status }}">
+                {{ route.origin }} → {{ route.destination }} · {{ route.per_week }} раз в неделю · {{ route.status }}
+            </button>
+        {% endfor %}
+        </div>
+        <p data-route-card>Выберите маршрут. Билет не оформляется.</p>
+    </section>
+    {% endif %}
+    <div class="tabs" data-tabs>
+        <button type="button" class="on" data-tab="about">О компании</button>
+        <button type="button" data-tab="sites">Площадки</button>
+        <button type="button" data-tab="goods">Продукция</button>
+        <button type="button" data-tab="boss">Руководство</button>
+    </div>
+    <section data-panel="about">
+        <p>{{ company.summary }}</p>
+        {% if company.slug == 'panda-group' %}
+        <p>Направления: содержание панд в легенде, фермы, сувениры, кафе, сладости, развлечения и журнал помощи. Живых животных витрина не продаёт.</p>
+        {% elif company.slug == 'two-toe' %}
+        <p>Фермы, инкубаторы, лаборатория селекции и полка TWO-TOE. Достижение легенды: «первая смена, где у всех кур в отчёте по два пальца».</p>
+        {% elif company.slug == 'shmileon' %}
+        <p>Пасеки, семьи пчёл, мёд, воск, шампиньоны и фасовка. Компания Максуда подчинена холдингу стратегически и управляется им самостоятельно.</p>
+        {% endif %}
+    </section>
+    <section data-panel="sites" hidden>
+        <ul>{% for line in branches %}<li>{{ line }}</li>{% endfor %}</ul>
+    </section>
+    <section data-panel="goods" hidden>
+        {% if goods %}
+        <div class="grid-4">
+            {% for product in goods %}
+            <a class="card" href="{{ url_for('catalog.product', slug=product.slug) }}"><strong>{{ product.name }}</strong><span>{{ product.price_kop|money }}</span></a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>Отдельной полки нет. Смотрите <a href="{{ url_for('catalog.index') }}">каталог</a> и <a href="{{ url_for('group.exchange') }}">биржу</a>.</p>
+        {% endif %}
+    </section>
+    <section data-panel="boss" hidden>
+        <h2>{{ company.boss }}</h2>
+        <p>Связь с холдингом: стратегические решения остаются у Руслана Триллионеркина.</p>
+        <p><a href="{{ url_for('group.stock', ticker=company.ticker) }}">Котировка {{ company.ticker }}</a></p>
+    </section>
+    <section id="desk">
+        <h2>Последние новости</h2>
+        <div class="news-list">
+        {% for post in posts %}
+            <article class="card"><p>{{ post.created_at.strftime('%d.%m.%Y') }} · {{ post.category }}</p><h3><a href="{{ url_for('main.news_item', slug=post.slug) }}">{{ post.title }}</a></h3><p>{{ post.excerpt }}</p></article>
+        {% else %}
+            <p>Для этой компании новостей пока нет. <a href="{{ url_for('main.news') }}">Общая лента</a></p>
+        {% endfor %}
+        </div>
+        <p><a class="btn" href="{{ url_for('main.news', company=company.slug) }}">Все новости компании</a></p>
+        <h2>Связаться с компанией</h2>
+        <form method="post" action="{{ url_for('group.company_contact', slug=company.slug) }}" class="stack">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>Имя<input name="name" required value="{{ current_user.name if current_user.is_authenticated else '' }}"></label>
+            <label>Почта<input type="email" name="email" required value="{{ current_user.email if current_user.is_authenticated else '' }}"></label>
+            <label>Сообщение<textarea name="message" required></textarea></label>
+            <button class="btn btn-gold" type="submit">Оставить обращение</button>
+        </form>
+        <h2>Соседние компании</h2>
+        <p>{% for sister in sisters %}<a href="{{ url_for('group.company', slug=sister.slug) }}">{{ sister.name }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>
+    </section>
+</article>
+{% endblock %}
+{% block scripts %}
+{% if company.slug == 'gorilla' %}<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>{% endif %}
+<script>
+document.querySelectorAll("[data-tab]").forEach((button) => {
+    button.addEventListener("click", () => {
+        document.querySelectorAll("[data-tab]").forEach((item) => item.classList.remove("on"));
+        button.classList.add("on");
+        document.querySelectorAll("[data-panel]").forEach((panel) => { panel.hidden = panel.dataset.panel !== button.dataset.tab; });
+    });
+});
+document.querySelectorAll("[data-plane]").forEach((button) => {
+    button.addEventListener("click", () => {
+        const card = document.querySelector("[data-plane-card]");
+        if (!card) return;
+        card.textContent = `${button.dataset.name} · ${button.dataset.model} · борт ${button.dataset.tail} · мест ${button.dataset.seats}. ${button.dataset.status}. ${button.dataset.note} Бронь не создаётся.`;
+    });
+});
+document.querySelectorAll("[data-route]").forEach((button) => {
+    button.addEventListener("click", () => {
+        const card = document.querySelector("[data-route-card]");
+        card.textContent = button.textContent + ". " + button.dataset.note + " Бронь не создаётся.";
+    });
+});
+document.querySelector("[data-route-find]")?.addEventListener("input", (event) => {
+    const query = event.target.value.toLowerCase();
+    document.querySelectorAll("[data-route]").forEach((button) => {
+        button.hidden = query && !button.textContent.toLowerCase().includes(query);
+    });
+});
+{% if company.slug == 'gorilla' %}
+const zoneRows = {{ zone_data|tojson }};
+const map = L.map("war-map").setView([62, 90], 3);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "&copy; OpenStreetMap" }).addTo(map);
+const card = document.querySelector("[data-zone-card]");
+zoneRows.forEach((zone) => {
+    L.marker([zone.lat, zone.lng]).addTo(map).bindPopup(zone.region).on("click", () => {
+        card.hidden = false;
+        card.innerHTML = `<h3>${zone.region}</h3><p>${zone.title}</p><p>${zone.status}</p><p>На схеме против: ${zone.foe}</p><p>Условные фигуры: ${zone.troops}. Влияние империи: ${zone.influence}%.</p><p>${zone.story}</p><p>${zone.updated}</p>`;
+    });
+});
+{% endif %}
+document.querySelectorAll("[data-count]").forEach((node) => {
+    const target = Number(node.dataset.count);
+    const start = performance.now();
+    const step = (now) => {
+        const t = Math.min(1, (now - start) / 800);
+        node.textContent = String(Math.round(target * t));
+        if (t < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+});
+</script>
+{% endblock %}

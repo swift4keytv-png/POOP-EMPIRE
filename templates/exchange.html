@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}POOP STOCK EXCHANGE{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/group.css') }}">{% endblock %}
+{% block content %}
+<section class="wrap universe exchange">
+    <p class="eyebrow">DEMO · виртуальный рынок, не биржа и не банк</p>
+    <h1>POOP STOCK EXCHANGE</h1>
+    <p>Котировки двигает сервер. POOP EMPIRE GROUP держит первое место по капитализации. Покупка списывает только инвестиционный баланс кабинета.</p>
+    <div class="figures">
+        <article class="figure fiction"><small>DEMO · капитализация рынка</small><strong data-cap>{{ cap|rubbig }}</strong></article>
+        <article class="figure fiction"><small>DEMO · объём ленты</small><strong data-volume>{{ volume }}</strong></article>
+        <article class="figure fiction"><small>Инвестиционный баланс</small><strong data-balance>{{ balance|money }}</strong></article>
+    </div>
+    <canvas id="market" height="120"></canvas>
+    <label>Поиск <input data-find placeholder="тикер или название"></label>
+    <div class="filters">
+        <button type="button" class="on" data-filter="all">Все</button>
+        <button type="button" data-filter="up">Рост</button>
+        <button type="button" data-filter="down">Падение</button>
+    </div>
+    <table class="board">
+        <thead><tr><th>Тикер</th><th>Компания</th><th>Цена</th><th>День</th><th>Капитализация DEMO</th><th>Объём</th><th></th></tr></thead>
+        <tbody>
+        {% for row in quotes %}
+        <tr data-row data-ticker="{{ row.ticker }}" data-change="{{ row.change }}">
+            <td><a href="{{ url_for('group.stock', ticker=row.ticker) }}">{{ row.ticker }}</a></td>
+            <td>{{ row.name }}</td>
+            <td data-price>{{ row.price|money }}</td>
+            <td class="{{ 'up' if row.change >= 0 else 'down' }}">{{ '%+.2f'|format(row.change) }}%</td>
+            <td>{{ row.cap|rubbig }}</td>
+            <td>{{ row.volume }}</td>
+            <td>
+                {% if current_user.is_authenticated %}
+                <button type="button" data-buy="{{ row.ticker }}">Купить 1</button>
+                <button type="button" data-sell="{{ row.ticker }}">Продать 1</button>
+                {% else %}
+                <a href="{{ url_for('auth.login', next='/exchange') }}">Войти</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="split">
+        <section>
+            <h2>Портфель</h2>
+            <ul data-portfolio>
+            {% for row in portfolio %}
+                <li>{{ row.company.ticker }} · {{ row.qty }} шт. · средняя {{ row.avg_kop|money }}</li>
+            {% else %}
+                <li>Пока пусто.</li>
+            {% endfor %}
+            </ul>
+        </section>
+        <section>
+            <h2>Сделки</h2>
+            <ul>
+            {% for row in trades %}
+                <li>{{ row.side }} {{ row.company.ticker }} · {{ row.qty }} · {{ row.price_kop|money }}</li>
+            {% else %}
+                <li>Сделок ещё нет.</li>
+            {% endfor %}
+            </ul>
+        </section>
+        <section>
+            <h2>Лента DEMO</h2>
+            <ul>{% for item in news %}<li>{{ item.title }}{% if item.company %} · {{ item.company.ticker }}{% endif %}</li>{% else %}<li>Событий пока нет.</li>{% endfor %}</ul>
+        </section>
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+<script>window.PEG_HISTORY = {{ chart|tojson }};</script>
+<script src="{{ url_for('static', filename='js/exchange.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "account/_layout.html" %}
+{% block account %}
+<h1>{{ order.number }}</h1>
+<section class="tracker" data-delivery="{{ order.number }}">
+    <h2 data-delivery-who>{% if 'самовывоз' in (order.delivery_name or '')|lower %}Самовывоз · Максима Горького, 70/1{% else %}POOP DELIVERY · {{ order.courier_name or 'курьер назначается' }}{% endif %}</h2>
+    <p class="scooter-line"><span class="scooter" data-scooter>{% if 'самовывоз' in (order.delivery_name or '')|lower %}🏢{% else %}🛵{% endif %}</span></p>
+    <p data-delivery-title></p>
+    <p data-delivery-hint></p>
+    <ul data-delivery-log></ul>
+</section>
+<p>{{ order.city }}, {{ order.address }} · {{ order.delivery_name }}</p>
+<table>
+{% for item in order.items %}
+<tr><td>{{ item.name }}</td><td>{{ item.qty }}</td><td>{{ item.price_kop|money }}</td></tr>
+{% endfor %}
+</table>
+<p>Скидка карты −{{ order.card_discount_kop|money }}. Промокод −{{ order.promo_discount_kop|money }}. Бонусы −{{ order.bonus_spent_kop|money }}. Доставка {{ order.delivery_fee_kop|money }}. Итого {{ order.total_kop|money }}.</p>
+{% endblock %}

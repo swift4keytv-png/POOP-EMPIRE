@@ -1,0 +1,38 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Курьеры POOP DELIVERY</h1>
+<p>Фото реальных людей не подставляются, если их нет в папке. У Сергея и Тимура стоят уже загруженные портреты.</p>
+{% for row in couriers %}
+<form method="post" class="stack admin-card">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="id" value="{{ row.id }}">
+    <p>{{ row.mark }} {{ row.name }} «{{ row.nickname }}» · выполнено {{ row.done_count }} · рейтинг {{ row.rating }}</p>
+    {% if row.photo %}<img class="admin-photo" src="{{ url_for('static', filename=row.photo) }}" alt="">{% endif %}
+    <input name="name" value="{{ row.name }}">
+    <input name="nickname" value="{{ row.nickname }}">
+    <input name="specialty" value="{{ row.specialty }}">
+    <input name="status" value="{{ row.status }}">
+    <input name="eta" value="{{ row.eta }}">
+    <input name="mark" value="{{ row.mark }}">
+    <textarea name="bio">{{ row.bio }}</textarea>
+    <label><input type="checkbox" name="active" value="1" {% if row.is_active %}checked{% endif %}> активен</label>
+    <label>Назначить на заказ <input name="number" placeholder="PE-2026-0001"></label>
+    <label><input type="checkbox" name="assign" value="1"> заменить курьера этого заказа</label>
+    <button class="btn" type="submit">Сохранить</button>
+</form>
+{% endfor %}
+<h2>Новый</h2>
+<form method="post" class="stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input name="slug" placeholder="slug" required>
+    <input name="name" placeholder="имя" required>
+    <input name="nickname" placeholder="прозвище">
+    <input name="specialty">
+    <input name="status" value="свободен">
+    <input name="eta" value="30–50 мин">
+    <input name="mark" value="🛵">
+    <textarea name="bio"></textarea>
+    <label><input type="checkbox" name="active" value="1" checked> активен</label>
+    <button class="btn btn-gold" type="submit">Добавить</button>
+</form>
+{% endblock %}

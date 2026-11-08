@@ -1,0 +1,29 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Заказы</h1>
+<table>
+    <thead><tr><th>Номер</th><th>Кто</th><th>Итого</th><th>Скидка карты</th><th>Демо</th><th>Статус</th></tr></thead>
+    <tbody>
+    {% for order in orders %}
+    <tr>
+        <td>{{ order.number }}</td>
+        <td>{{ order.customer_name }}</td>
+        <td>{{ order.total_kop|money }}</td>
+        <td>{{ order.card_discount_kop|money }}</td>
+        <td>{{ 'да' if order.is_demo else 'нет' }}</td>
+        <td>
+            <form method="post" action="{{ url_for('admin.order_status', order_id=order.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <select name="status">
+                    {% for status in ['new','paid','shipping','delivered','cancelled'] %}
+                    <option {% if order.status == status %}selected{% endif %}>{{ status }}</option>
+                    {% endfor %}
+                </select>
+                <button class="btn" type="submit">OK</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

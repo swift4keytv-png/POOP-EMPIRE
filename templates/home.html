@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% from "_macros.html" import card with context %}
+{% block title %}{{ site.brand }}{% endblock %}
+{% block content %}
+<section class="hero">
+    <div class="wrap hero-grid">
+        <div>
+            <p class="eyebrow">{{ site.corp }}</p>
+            <h1>{{ site.brand }}</h1>
+            <p class="slogan">{{ site.slogan }}</p>
+            <div class="hero-actions">
+                <a class="btn btn-gold" href="{{ url_for('catalog.index') }}">Открыть каталог</a>
+                <a class="btn btn-ghost" href="{{ url_for('main.finance') }}">Финансовый зал</a>
+            </div>
+        </div>
+        <div class="hero-board">
+            <p>Корпоративная платформа</p>
+            <ul>
+                <li>Магазин и доставка</li>
+                <li>Какашечная карта со скидкой в заказе</li>
+                <li>Зал выручки и шуточный капитал</li>
+                <li>Руководство, партнёры и Тишка</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+{% if banners %}
+<section class="wrap banner-row">
+    {% for banner in banners %}
+    <a class="banner{% if 'cards/' in (banner.image or '') %} banner-card{% endif %}" href="{{ banner.link }}">
+        {% if banner.image %}<img src="{{ url_for('static', filename=banner.image) }}" alt="{{ banner.title }}">{% endif %}
+        <span><strong>{{ banner.title }}</strong><small>{{ banner.subtitle }}</small></span>
+    </a>
+    {% endfor %}
+</section>
+{% endif %}
+
+<section class="gold-block" id="gold-card">
+    <div class="wrap gold-grid">
+        <div>
+            <p class="eyebrow">Программа лояльности</p>
+            <h2>ПОЛУЧИ СВОЮ КАКАШЕЧНУЮ КАРТУ</h2>
+            <p class="lead">Настоящий миллиардер знает: платить полную стоимость за какашки — неразумно.</p>
+            <div class="tier-list">
+                {% for tier in tiers %}
+                <div>
+                    <strong>{{ tier.name }}</strong>
+                    <span>скидка {{ tier.discount_percent }}%</span>
+                    <small>{{ tier.tagline }}</small>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            {% if current_user.is_authenticated and current_user.card %}
+            <img class="issued" src="{{ url_for('static', filename=current_user.card.image) }}" alt="Ваша карта">
+            <p>Скидка {{ current_user.card.tier.discount_percent }}% уже сидит в расчёте заказа. Бонусы: {{ current_user.card.bonus_kop|money }}.</p>
+            <a class="btn btn-gold" href="{{ url_for('account.card') }}">Открыть в кабинете</a>
+            {% elif current_user.is_authenticated %}
+            <form class="card-form" action="{{ url_for('shop.issue_card') }}" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="designs">
+                    {% for tier in tiers %}
+                    <label class="design {{ tier.slug }}">
+                        <input type="radio" name="design" value="{{ tier.slug }}" {% if tier.slug == 'gold' %}checked{% endif %}>
+                        <img src="{{ url_for('static', filename='images/cards/' ~ tier.slug ~ '.png') }}" alt="{{ tier.name }}">
+                        <span>{{ tier.name }} · {{ tier.discount_percent }}%</span>
+                    </label>
+                    {% endfor %}
+                </div>
+                <label>Имя на карте
+                    <input name="holder" maxlength="26" required value="{{ current_user.name }}" data-holder>
+                </label>
+                <p class="preview-number">Номер выпустит штаб в момент записи в базу. На образце он закрыт.</p>
+                <button class="btn btn-gold" type="submit">Выпустить карту</button>
+            </form>
+            {% else %}
+            <p>Чтобы карта сохранилась за вами, нужен кабинет.</p>
+            <a class="btn btn-gold" href="{{ url_for('auth.register') }}">Регистрация и выпуск</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% if cereal %}
+<section class="wrap cereal-home">
+    <img src="{{ url_for('static', filename=cereal.images[0].path) }}" alt="Тишка">
+    <div>
+        <p class="eyebrow">Рекламный бренд</p>
+        <h2>Тишкины хлопья</h2>
+        <p>Тишка одобряет! Завтрак настоящего миллиардера. Хруст, который заслужил даже кот.</p>
+        <strong>{{ cereal.price_kop|money }}</strong>
+        <a class="btn btn-gold" href="{{ url_for('catalog.product', slug=cereal.slug) }}">Страница товара</a>
+    </div>
+</section>
+{% endif %}
+
+<section class="wrap">
+    <h2>Витрина штаба</h2>
+    <div class="grid-4">
+        {% for product in featured %}{{ card(product) }}{% endfor %}
+    </div>
+</section>
+
+<section class="wrap">
+    <h2>Руководство и партнёры</h2>
+    <div class="grid-4 people">
+        {% for person in partners %}
+        <a class="person" href="{{ url_for('main.partner', slug=person.slug) }}">
+            <img src="{{ url_for('static', filename=person.photo) }}" alt="{{ person.name }}">
+            <strong>{{ person.name }}</strong>
+            <span>{{ person.title }}</span>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+<p class="home-secret"><button type="button" data-secret>Секрет империи</button></p>
+{% endblock %}

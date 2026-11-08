@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}О корпорации{% endblock %}
+{% block content %}
+<section class="wrap narrow">
+    <h1>{{ site.brand }}</h1>
+    <p>{{ site.slogan }}</p>
+    <p>{{ site.corp }} держит витрину, программу карт, доставку, заводы, колесо, шуточное казино и финансовый зал. Основатель — Руслан Триллионеркин. Артур Ахметвалеев ведёт заводы, Серёга — POOP DELIVERY и SERGO ENERGY. Почётный пушистый партнёр — кот Тишка.</p>
+    <p><a href="{{ url_for('group.holding') }}">Схема холдинга</a>, <a href="{{ url_for('group.company', slug='panda-group') }}">PANDA GROUP</a>, <a href="{{ url_for('group.company', slug='two-toe') }}">двухпалые курицы</a>, <a href="{{ url_for('group.company', slug='shmileon') }}">SHMILEON</a>, <a href="{{ url_for('group.exchange') }}">биржа DEMO</a> и <a href="{{ url_for('group.dream') }}">Xiaomi 17T Pro</a>.</p>
+    <p>Тексты про капитал и прогулки — корпоративная шутка. Заказы, скидки и карты пишутся в локальную базу SQLite.</p>
+</section>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "account/_layout.html" %}
+{% block account %}
+<h1>Какашечная карта</h1>
+{% if current_user.card %}
+{% include "account/_black.html" %}
+<img class="issued" src="{{ url_for('static', filename=current_user.card.image) }}" alt="Карта {{ current_user.card.holder_name }}">
+<dl class="totals">
+    <dt>Держатель</dt><dd>{{ current_user.card.holder_name }}</dd>
+    <dt>Номер</dt><dd>{{ current_user.card.number }}</dd>
+    <dt>Уровень</dt><dd>{{ current_user.card.tier.name }}</dd>
+    <dt>Текущая скидка</dt><dd>{{ current_user.card.tier.discount_percent }}%</dd>
+    <dt>Бонусы</dt><dd>{{ current_user.card.bonus_kop|money }}</dd>
+    <dt>Статус</dt><dd>Активна · витрина</dd>
+</dl>
+<p>Скидка применяется к товарам при оформлении. Бонусы капают с оплаченной части и их можно списать в том же заказе. Пополнение ниже только увеличивает эти бонусы.</p>
+<form id="topup" class="stack card-topup" method="post" action="{{ url_for('account.card') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <h2>Пополнить карту</h2>
+    <p>Виртуальные бонусы. Номер банковской карты не спрашиваем и не храним. Это не операция банка.</p>
+    <label>Сумма, ₽<input name="amount" type="number" min="100" max="1000000" value="1000" required></label>
+    <button class="btn btn-gold" type="submit">Пополнить карту</button>
+</form>
+<h2 id="ops">История операций</h2>
+<ul class="ops">
+{% for row in ledger %}
+<li><span>{{ kinds.get(row.kind, row.kind) }}</span> <strong>{{ row.amount_kop|money }}</strong> <small>{{ row.created_at.strftime("%d.%m.%Y %H:%M") }} · {{ row.note }}</small></li>
+{% else %}
+<li>Операций пока нет. Списание появится после заказа с бонусами, начисление — после оплаты заказа.</li>
+{% endfor %}
+</ul>
+{% else %}
+<p>Карты ещё нет. <a href="{{ url_for('main.home') }}#gold-card">Выпустить на главной</a>.</p>
+{% endif %}
+{% endblock %}

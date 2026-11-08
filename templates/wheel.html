@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}POOP WHEEL{% endblock %}
+{% block content %}
+<section class="wrap wheel-page">
+    <div>
+        <p class="eyebrow">Развлечение штаба</p>
+        <h1>POOP WHEEL</h1>
+        <p>Результат выбирает сервер. Вероятности ниже — это доли весов, не обещание выигрыша. Одна бесплатная попытка в сутки. Ещё одна попытка приходит после оформленного заказа. POOP COINS нельзя купить и нельзя обменять на деньги.</p>
+        <p>Попыток сейчас: <strong data-spins>{{ left }}</strong></p>
+        <button class="btn btn-gold" type="button" data-spin {% if not current_user.is_authenticated %}disabled{% endif %}>Крутить</button>
+        {% if not current_user.is_authenticated %}<p><a href="{{ url_for('auth.login', next='/wheel') }}">Войдите, чтобы крутить</a></p>{% endif %}
+        <button class="btn" type="button" data-sound-toggle>Звук: вкл</button>
+        <div class="wheel-result" data-wheel-result hidden></div>
+        <h2>Вероятности</h2>
+        <table>
+            <thead><tr><th>Сектор</th><th>Вес</th><th>Шанс</th></tr></thead>
+            <tbody>
+            {% for prize in prizes %}
+            <tr><td>{{ prize.title }}</td><td>{{ prize.weight }}</td><td>{{ '%.1f'|format(prize.weight / total * 100) }}%</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <h2>История</h2>
+        <ul>
+        {% for row in history %}<li>{{ row.created_at.strftime('%d.%m %H:%M') }} — {{ row.result_text }}</li>{% else %}<li>Пока пусто.</li>{% endfor %}
+        </ul>
+    </div>
+    <div class="wheel-box">
+        <div class="pointer"></div>
+        <div class="wheel" data-wheel data-count="{{ prizes|length }}">
+            {% for prize in prizes %}
+            <span style="--i: {{ loop.index0 }}">{{ prize.title }}</span>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

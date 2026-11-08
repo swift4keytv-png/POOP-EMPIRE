@@ -1,0 +1,37 @@
+{% extends "account/_layout.html" %}
+{% block account %}
+<h1>{{ current_user.name }}</h1>
+{% for note in notices %}
+<article class="card">
+    <h2>{{ note.title }}</h2>
+    <p style="white-space: pre-line">{{ note.body }}</p>
+    {% if note.order_number %}<p><a class="btn" href="{{ url_for('account.order', number=note.order_number) }}">Подробнее о самовывозе</a></p>{% endif %}
+</article>
+{% endfor %}
+<p>{{ current_user.email }}</p>
+{% include "account/_black.html" %}
+{% if not current_user.card %}
+<p><a href="{{ url_for('main.home') }}#gold-card">Выпустить какашечную карту</a></p>
+{% endif %}
+{% if ledger %}
+<h2>Последние операции карты</h2>
+<ul class="ops">
+{% for row in ledger %}
+<li><span>{{ kinds.get(row.kind, row.kind) }}</span> <strong>{{ row.amount_kop|money }}</strong> <small>{{ row.created_at.strftime("%d.%m.%Y %H:%M") }} · {{ row.note }}</small></li>
+{% endfor %}
+</ul>
+{% endif %}
+<p>POOP COINS: {{ current_user.poop_coins }}. Это фишки колеса и казино, у них нет цены в рублях. Попыток колеса сверх ежедневной: {{ current_user.extra_spins }}. <a href="{{ url_for('play.wheel') }}">Колесо</a> · <a href="{{ url_for('play.casino') }}">Казино</a></p>
+<form method="post" action="{{ url_for('account.profile') }}" class="stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Имя<input name="name" value="{{ current_user.name }}"></label>
+    <label>Телефон<input name="phone" value="{{ current_user.phone or '' }}"></label>
+    <button class="btn" type="submit">Сохранить профиль</button>
+</form>
+<h2>Последние заказы</h2>
+<ul>
+{% for order in orders %}
+<li><a href="{{ url_for('account.order', number=order.number) }}">{{ order.number }}</a> · {{ order.total_kop|money }} · {{ order.status }}{% if order.is_demo %} · демо{% endif %}</li>
+{% else %}<li>Заказов пока нет.</li>{% endfor %}
+</ul>
+{% endblock %}

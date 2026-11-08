@@ -1,0 +1,16 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Доставка</h1>
+{% for method in methods %}
+<form method="post" class="admin-line">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="id" value="{{ method.id }}">
+    <input name="name" value="{{ method.name }}">
+    <input name="description" value="{{ method.description }}">
+    <input name="fee" value="{{ '%.2f'|format(method.fee_kop / 100) }}">
+    <input name="days" value="{{ method.days }}">
+    <label><input type="checkbox" name="active" value="1" {% if method.is_active %}checked{% endif %}> активен</label>
+    <button class="btn" type="submit">Сохранить</button>
+</form>
+{% endfor %}
+{% endblock %}

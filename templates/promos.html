@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Промокоды{% endblock %}
+{% block content %}
+<section class="wrap">
+    <h1>Промокоды</h1>
+    <p>Код вводится в корзине и считается после скидки какашечной карты.</p>
+    <table>
+        <thead><tr><th>Код</th><th>Скидка</th><th>Минимум товаров после карты</th></tr></thead>
+        <tbody>
+        {% for code in codes %}
+        <tr><td>{{ code.code }}</td><td>{{ code.discount_percent }}%</td><td>{{ code.min_kop|money }}</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

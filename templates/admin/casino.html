@@ -1,0 +1,21 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Таблица POOP CASINO</h1>
+<p>Веса и множители виртуальных POOP COINS. Деньги здесь не участвуют. Порядок символов слота: какашка, корона, монета, алмаз, панда, энергия, кубок.</p>
+<form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <p>Веса слота <input name="slot_weights" value="{{ rules.slots.weights|join(', ') }}"></p>
+    <p>Выплаты за три символа <input name="slot_pay" value="{{ rules.slots.pay|join(', ') }}"></p>
+    <p>Минимум слота <input name="slot_min" type="number" value="{{ rules.slots.min }}"></p>
+    <p>Множители GOLDEN POOP <input name="golden_mult" value="{{ rules.golden.multipliers|join(', ') }}"></p>
+    <p>Веса GOLDEN POOP <input name="golden_weights" value="{{ rules.golden.weights|join(', ') }}"></p>
+    <p>Минимум золотой игры <input name="golden_min" type="number" value="{{ rules.golden.min }}"></p>
+    <p>Шанс джекпота, % <input name="jackpot_chance" type="number" value="{{ rules.jackpot.chance }}"></p>
+    <p>Минимум джекпота <input name="jackpot_min" type="number" value="{{ rules.jackpot.min }}"></p>
+    <p>Красное × <input name="red_mult" type="number" value="{{ rules.roulette.red }}"></p>
+    <p>Чёрное × <input name="black_mult" type="number" value="{{ rules.roulette.black }}"></p>
+    <p>Золотой сектор × <input name="gold_mult" type="number" value="{{ rules.roulette.gold }}"></p>
+    <p>Точная сумма костей × <input name="dice_mult" type="number" value="{{ rules.dice.exact }}"></p>
+    <button class="btn" type="submit">Сохранить</button>
+</form>
+{% endblock %}

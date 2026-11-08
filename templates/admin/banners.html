@@ -1,0 +1,32 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Рекламные баннеры</h1>
+{% for banner in banners %}
+<form method="post" enctype="multipart/form-data" class="admin-line">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="id" value="{{ banner.id }}">
+    <input name="title" value="{{ banner.title }}">
+    <input name="subtitle" value="{{ banner.subtitle }}">
+    <input name="link" value="{{ banner.link }}">
+    <input type="file" name="image" accept="image/*">
+    <label><input type="checkbox" name="active" value="1" {% if banner.is_active %}checked{% endif %}> активен</label>
+    <button class="btn" type="submit">Сохранить</button>
+</form>
+<form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="action" value="delete">
+    <input type="hidden" name="id" value="{{ banner.id }}">
+    <button class="btn" type="submit">Удалить</button>
+</form>
+{% endfor %}
+<h2>Новый баннер</h2>
+<form method="post" enctype="multipart/form-data" class="stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Заголовок<input name="title" required></label>
+    <label>Подзаголовок<input name="subtitle"></label>
+    <label>Ссылка<input name="link" value="/"></label>
+    <label>Картинка<input type="file" name="image" accept="image/*"></label>
+    <label><input type="checkbox" name="active" value="1" checked> активен</label>
+    <button class="btn btn-gold" type="submit">Добавить</button>
+</form>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Промокоды</h1>
+{% for code in codes %}
+<form method="post" class="admin-line">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="id" value="{{ code.id }}">
+    <input name="code" value="{{ code.code }}">
+    <input name="discount" type="number" value="{{ code.discount_percent }}">
+    <input name="minimum" value="{{ '%.2f'|format(code.min_kop / 100) }}">
+    <label><input type="checkbox" name="active" value="1" {% if code.is_active %}checked{% endif %}> активен</label>
+    <button class="btn" type="submit">Сохранить</button>
+</form>
+{% endfor %}
+<form method="post" class="admin-line">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input name="code" placeholder="КОД">
+    <input name="discount" type="number" placeholder="%">
+    <input name="minimum" placeholder="минимум ₽">
+    <label><input type="checkbox" name="active" value="1" checked> активен</label>
+    <button class="btn btn-gold" type="submit">Добавить</button>
+</form>
+{% endblock %}

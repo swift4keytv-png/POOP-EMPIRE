@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Помощь пандам{% endblock %}
+{% block content %}
+<section class="wrap charity">
+    <h1>Помощь пандам</h1>
+    <p>Журнал демонстрационный. Запись видна на сайте, перевода фонду нет и деньги никуда не уходят.</p>
+    <p>В журнале сейчас {{ total|money }}.</p>
+    <form method="post" class="stack">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Имя<input name="name"></label>
+        <label>Сумма записи, ₽<input name="amount" required value="50"></label>
+        <label>Сообщение<textarea name="message"></textarea></label>
+        <button class="btn btn-gold" type="submit">Записать жест</button>
+    </form>
+    <table>
+        <thead><tr><th>Кто</th><th>Сумма</th><th>Сообщение</th></tr></thead>
+        <tbody>
+        {% for row in donations %}
+        <tr><td>{{ row.donor_name }}</td><td>{{ row.amount_kop|money }}</td><td>{{ row.message }}</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

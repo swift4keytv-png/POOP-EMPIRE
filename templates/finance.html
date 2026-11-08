@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Финансовая империя Руслана Триллионеркина{% endblock %}
+{% block content %}
+<section class="finance">
+    <div class="wrap">
+        <p class="eyebrow">POOP EMPIRE GROUP</p>
+        <h1>Финансовая империя Руслана Триллионеркина</h1>
+        <p class="lead">Два слоя цифр. Магазин считается из заказов в SQLite. Капитал миллиардера — отдельная шуточная легенда, её правит админка.</p>
+        <div class="fin-switch">
+            <span class="badge-real">Показатели магазина</span>
+            <span class="badge-fiction">Вымысел миллиардера</span>
+        </div>
+        <div class="figures">
+            <article class="figure fiction" data-count="{{ fin.capital }}"><small>Капитал Руслана</small><strong>0</strong><em>не бухгалтерия</em></article>
+            <article class="figure fiction" data-count="{{ fin.valuation }}"><small>Стоимость корпорации</small><strong>0</strong><em>легенда</em></article>
+            <article class="figure real" data-count="{{ (fin.revenue_kop / 100)|round(0, 'floor')|int }}"><small>Выручка магазина, ₽</small><strong>0</strong><em>{{ fin.live_count }} живых · {{ fin.demo_count }} демо</em></article>
+            <article class="figure real" data-count="{{ (fin.gross_kop / 100)|round(0, 'floor')|int }}"><small>Валовая прибыль магазина, ₽</small><strong>0</strong><em>выручка минус себестоимость</em></article>
+        </div>
+        <div class="fin-grid">
+            <section class="panel">
+                <h2>Выручка за 30 дней <span class="badge-real">магазин</span></h2>
+                <canvas id="chartRevenue" height="140"></canvas>
+            </section>
+            <section class="panel">
+                <h2>Прибыль по месяцам <span class="badge-real">магазин</span></h2>
+                <canvas id="chartProfit" height="140"></canvas>
+            </section>
+            <section class="panel">
+                <h2>Продажи по категориям <span class="badge-real">магазин</span></h2>
+                <canvas id="chartCats" height="140"></canvas>
+            </section>
+            <section class="panel">
+                <h2>Динамика заказов <span class="badge-real">магазин</span></h2>
+                <canvas id="chartOrders" height="140"></canvas>
+            </section>
+            <section class="panel wide">
+                <h2>Структура расходов <span class="badge-fiction">легенда</span></h2>
+                <canvas id="chartExpense" height="120"></canvas>
+            </section>
+        </div>
+        <div class="fin-tables">
+            <section>
+                <h2>Доходы и расходы магазина <span class="badge-real">магазин</span></h2>
+                <table>
+                    <tr><th>Выручка</th><td>{{ fin.revenue_kop|money }}</td></tr>
+                    <tr><th>Себестоимость</th><td>{{ fin.cogs_kop|money }}</td></tr>
+                    <tr><th>Доставка, доход</th><td>{{ fin.delivery_kop|money }}</td></tr>
+                    <tr><th>Валовая прибыль</th><td>{{ fin.gross_kop|money }}</td></tr>
+                    <tr><th>Заказов</th><td>{{ fin.orders_count }}</td></tr>
+                    <tr><th>Средний чек товаров</th><td>{{ fin.avg_kop|money }}</td></tr>
+                </table>
+            </section>
+            <section>
+                <h2>Топ товаров по прибыли <span class="badge-real">магазин</span></h2>
+                <table>
+                    <thead><tr><th>Товар</th><th>Штук</th><th>Выручка</th><th>Прибыль</th></tr></thead>
+                    <tbody>
+                    {% for row in fin.top %}
+                    <tr><td>{{ row.name }}</td><td>{{ row.qty }}</td><td>{{ row.revenue|money }}</td><td>{{ row.profit|money }}</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+            {% for section, title in [('operation','Финансовые операции'),('investment','Инвестиции'),('asset','Активы'),('expense','Расходы легенды'),('income','Доходы легенды'),('forecast','Финансовый прогноз'),('deal','Крупнейшие сделки')] %}
+            <section>
+                <h2>{{ title }} <span class="badge-fiction">легенда</span></h2>
+                <table>
+                    <thead><tr><th>Название</th><th>Сумма</th><th>Пояснение</th></tr></thead>
+                    <tbody>
+                    {% for row in fin.groups[section] %}
+                    <tr><td>{{ row.title }}{% if row.period %} · {{ row.period }}{% endif %}</td><td>{{ row.amount_rub|rubbig }}</td><td>{{ row.note }}</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+            {% endfor %}
+            <section>
+                <h2>Выручка и прибыль холдинга <span class="badge-fiction">легенда</span></h2>
+                <p>Легендарная выручка {{ fin.fiction_revenue|rubbig }}. Легендарная прибыль {{ fin.fiction_profit|rubbig }}. Эти числа не складываются с заказами витрины.</p>
+            </section>
+        </div>
+    </div>
+</section>
+<script id="fin-data" type="application/json">{{ {
+  "labels": fin.labels_30,
+  "revenue": fin.revenue_30,
+  "orders": fin.orders_30,
+  "months": fin.month_labels,
+  "profit": fin.month_profit,
+  "cats": fin.cat_labels,
+  "catValues": fin.cat_values,
+  "expenses": fin.expense_labels,
+  "expenseValues": fin.expense_values
+}|tojson }}</script>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/finance.js') }}"></script>
+{% endblock %}

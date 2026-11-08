@@ -1,0 +1,19 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Заводы</h1>
+<p>Объекты демонстрационные.</p>
+{% for plant in plants %}
+<form method="post" class="stack admin-card">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="id" value="{{ plant.id }}">
+    <label>Название<input name="name" value="{{ plant.name }}"></label>
+    <label>Город<input name="city" value="{{ plant.city }}"></label>
+    <label>Статус<input name="status" value="{{ plant.status }}"></label>
+    <label>Сотрудники<input name="staff" type="number" value="{{ plant.staff }}"></label>
+    <label>Демонстрационная выручка, ₽<input name="revenue" value="{{ plant.revenue_rub }}"></label>
+    <label>Инновация<textarea name="innovation">{{ plant.innovation }}</textarea></label>
+    <label><input type="checkbox" name="active" value="1" {% if plant.is_active %}checked{% endif %}> показывать</label>
+    <button class="btn" type="submit">Сохранить</button>
+</form>
+{% endfor %}
+{% endblock %}

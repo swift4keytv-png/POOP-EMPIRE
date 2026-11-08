@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Мечта Руслана — Xiaomi 17T Pro{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/group.css') }}">{% endblock %}
+{% block content %}
+<section class="wrap universe dream">
+    <p class="eyebrow">Не витрина и не заказ</p>
+    <h1>Мечта Руслана — Xiaomi 17T Pro</h1>
+    <p>У владельца какашечной империи в легенде есть капитал, заводы и биржа. Желанный телефон всё равно Xiaomi 17T Pro. Кнопка ниже ничего не покупает и заказ не создаёт.</p>
+    <div class="phone-scene">
+        <div class="phone" aria-hidden="true"><span>17T Pro</span></div>
+        <div>
+            <p>Фотографии Xiaomi 17T Pro в папке POOP EMPIRE нет, поэтому здесь схема корпуса, а не снимок аппарата.</p>
+            <ul>
+                <li>Экран: 6,83″ AMOLED, 1280×2772, до 144 Гц, пиковая яркость до 3500 нит.</li>
+                <li>Камеры Leica: 50 Мп основная, 50 Мп перископ 5×, 12 Мп сверхширокая, 32 Мп фронтальная.</li>
+                <li>Платформа: Dimensity 9500, до 16 ГБ памяти, накопитель 256 ГБ / 512 ГБ / 1 ТБ.</li>
+                <li>Батарея: 7000 мА·ч, 100 Вт по проводу, 50 Вт без провода.</li>
+                <li>Система: Android 16, HyperOS 3. Цифры сверены с карточкой модели, это не обзор магазина.</li>
+            </ul>
+            <button class="btn btn-gold" type="button" data-gift>ПОДАРИТЬ РУСЛАНУ МЕЧТУ</button>
+        </div>
+    </div>
+    <dialog class="gift" data-gift-box>
+        <h2>Мечта записана в шутку штаба</h2>
+        <p>Руслан кивает из кабинета. Телефон не заказан, деньги не списаны, склад пустой.</p>
+        <button class="btn" type="button" data-gift-close>Закрыть</button>
+    </dialog>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+document.querySelector("[data-gift]").addEventListener("click", () => document.querySelector("[data-gift-box]").showModal());
+document.querySelector("[data-gift-close]").addEventListener("click", () => document.querySelector("[data-gift-box]").close());
+</script>
+{% endblock %}

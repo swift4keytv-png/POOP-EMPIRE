@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% from "_macros.html" import card with context %}
+{% block title %}Каталог — {{ site.corp }}{% endblock %}
+{% block content %}
+<section class="wrap catalog-layout">
+    <aside class="filters">
+        <h1>Каталог</h1>
+        <form method="get" action="{{ url_for('catalog.index') }}">
+            <input type="hidden" name="q" value="{{ term }}">
+            <label>Категория
+                <select name="category">
+                    <option value="">Все</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.slug }}" {% if request.args.get('category') == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>Цена от, ₽<input name="price_min" value="{{ request.args.get('price_min', '') }}"></label>
+            <label>Цена до, ₽<input name="price_max" value="{{ request.args.get('price_max', '') }}"></label>
+            <label>Сортировка
+                <select name="sort">
+                    <option value="popular" {% if sort == 'popular' %}selected{% endif %}>По рейтингу</option>
+                    <option value="new" {% if sort == 'new' %}selected{% endif %}>Сначала новые</option>
+                    <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Сначала дешевле</option>
+                    <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Сначала дороже</option>
+                </select>
+            </label>
+            <button class="btn btn-gold" type="submit">Фильтровать</button>
+        </form>
+    </aside>
+    <div>
+        {% if term %}<p>Поиск: {{ term }}</p>{% endif %}
+        <div class="grid-3">
+            {% for product in products %}{{ card(product) }}{% else %}
+            <p>Ничего не нашлось.</p>
+            {% endfor %}
+        </div>
+        {% if pagination.pages > 1 %}
+        <p class="pager">
+            {% for p in pagination.iter_pages() %}
+                {% if p %}
+                <a href="{{ url_for('catalog.index', page=p, q=term, category=request.args.get('category'), sort=sort, price_min=request.args.get('price_min'), price_max=request.args.get('price_max')) }}">{{ p }}</a>
+                {% endif %}
+            {% endfor %}
+        </p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

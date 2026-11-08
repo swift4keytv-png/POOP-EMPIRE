@@ -1,0 +1,22 @@
+{% extends "account/_layout.html" %}
+{% block account %}
+<h1>Адреса доставки</h1>
+<ul>
+{% for addr in current_user.addresses %}
+<li>{{ addr.label }}: {{ addr.city }}, {{ addr.line }}{% if addr.is_default %} · основной{% endif %}
+<form action="{{ url_for('account.delete_address', addr_id=addr.id) }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn" type="submit">Удалить</button>
+</form>
+</li>
+{% endfor %}
+</ul>
+<form method="post" class="stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Метка<input name="label" placeholder="Штаб"></label>
+    <label>Город<input name="city" required></label>
+    <label>Адрес<input name="line" required></label>
+    <label><input type="checkbox" name="default" value="1"> Основной</label>
+    <button class="btn btn-gold" type="submit">Сохранить адрес</button>
+</form>
+{% endblock %}

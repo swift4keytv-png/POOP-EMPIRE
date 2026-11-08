@@ -1,0 +1,7 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Обращения</h1>
+{% for row in rows %}
+<article class="admin-card"><strong>{{ row.name }}</strong> · {{ row.email }}<p>{{ row.message }}</p></article>
+{% else %}<p>Пока пусто.</p>{% endfor %}
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Новости{% endblock %}
+{% block content %}
+<section class="wrap">
+    <h1>Новости штаба</h1>
+    <form method="get" class="choice">
+        <label>Компания
+            <select name="company" onchange="this.form.submit()">
+                <option value="">все</option>
+                {% for item in companies %}<option value="{{ item }}" {% if item == company %}selected{% endif %}>{{ item }}</option>{% endfor %}
+            </select>
+        </label>
+        <label>Категория
+            <select name="category" onchange="this.form.submit()">
+                <option value="">все</option>
+                {% for item in categories %}<option value="{{ item }}" {% if item == category %}selected{% endif %}>{{ item }}</option>{% endfor %}
+            </select>
+        </label>
+    </form>
+    <div class="news-list">
+        {% for post in posts %}
+        <article class="card">
+            <p>{{ post.created_at.strftime('%d.%m.%Y') }} · {{ post.category }} · {{ post.company_slug or 'империя' }}</p>
+            <h2><a href="{{ url_for('main.news_item', slug=post.slug) }}">{{ post.title }}</a></h2>
+            <p>{{ post.excerpt }}</p>
+        </article>
+        {% else %}
+        <p>По этому фильтру записей нет.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

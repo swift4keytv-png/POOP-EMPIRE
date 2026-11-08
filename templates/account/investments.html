@@ -1,0 +1,118 @@
+{% extends "account/_layout.html" %}
+{% block title %}Инвестиции{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/group.css') }}">{% endblock %}
+{% block account %}
+<h1>Инвестиции</h1>
+<p class="eyebrow">DEMO · виртуальный счёт, не банк и не карта</p>
+<div class="invest-card">
+    <p>Инвестиционный счёт · DEMO</p>
+    <strong>{{ current_user.name }}</strong>
+    <span>{{ mask }}</span>
+    <span>Виртуальный баланс {{ balance|money }}</span>
+    <small>Это рисунок кабинета, не платёжное средство.</small>
+</div>
+<div class="figures">
+    <article class="figure fiction"><small>Баланс</small><strong data-count="{{ balance }}">{{ balance|money }}</strong></article>
+    <article class="figure fiction"><small>Оценка портфеля</small><strong>{{ portfolio_value|money }}</strong></article>
+    <article class="figure fiction"><small>Прибыль или убыток</small><strong>{{ pnl|money }}</strong></article>
+</div>
+{% if rows %}<canvas id="book" height="120"></canvas>{% endif %}
+<h2>Пополнить счёт</h2>
+<form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="amount" value="1000" data-amount>
+    <button class="btn" type="button" data-sum="1000">1 000 ₽</button>
+    <button class="btn" type="button" data-sum="5000">5 000 ₽</button>
+    <button class="btn" type="button" data-sum="10000">10 000 ₽</button>
+    <button class="btn" type="button" data-sum="50000">50 000 ₽</button>
+    <label>Своя сумма, ₽ <input name="custom" type="number" min="100" max="1000000" data-custom></label>
+    <button class="btn btn-gold" type="submit">Пополнить виртуально</button>
+</form>
+<button class="btn" type="button" data-card-open>Пополнить с тестовой карты</button>
+<dialog class="gift" data-card-box>
+    <h2>DEMO-карта</h2>
+    <p>Реальные номера не принимаются и не сохраняются. Для проверки только 0000 0000 0000 0000, срок 12/30, код 000.</p>
+    <form data-card-form>
+        <label>Номер <input data-pan autocomplete="off" inputmode="numeric"></label>
+        <label>Срок <input data-exp autocomplete="off"></label>
+        <label>Код <input data-cvc autocomplete="off" inputmode="numeric"></label>
+        <label>Сумма, ₽ <input data-card-sum type="number" value="1000" min="100" max="1000000"></label>
+        <p data-card-error></p>
+        <button class="btn btn-gold" type="submit">Пополнить</button>
+        <button class="btn" type="button" data-card-close>Закрыть</button>
+    </form>
+</dialog>
+<h2>Портфель</h2>
+<table>
+    <tr><th>Бумага</th><th>Штук</th><th>Средняя</th><th>Сейчас</th><th>Итог</th></tr>
+    {% for row in rows %}
+    <tr>
+        <td><a href="{{ url_for('group.stock', ticker=row.company.ticker) }}">{{ row.company.ticker }}</a></td>
+        <td>{{ row.qty }}</td>
+        <td>{{ row.avg_kop|money }}</td>
+        <td>{{ row.company.price_kop|money }}</td>
+        <td>{{ ((row.company.price_kop - row.avg_kop) * row.qty)|money }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5">Пока пусто. <a href="{{ url_for('group.exchange') }}">На биржу</a></td></tr>
+    {% endfor %}
+</table>
+<form method="post" action="{{ url_for('account.invest_trade') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <select name="ticker">{% for quote in quotes %}<option>{{ quote.ticker }}</option>{% endfor %}</select>
+    <input name="qty" type="number" min="1" max="10000" value="1">
+    <button class="btn" name="side" value="buy" type="submit">Купить</button>
+    <button class="btn" name="side" value="sell" type="submit">Продать</button>
+</form>
+<h2>Операции</h2>
+<ul>
+{% for item in ledger %}
+    <li>{{ item.created_at.strftime('%d.%m.%Y %H:%M') }} · {{ item.kind }} · {{ item.amount_kop|money }} · {{ item.note }}</li>
+{% else %}
+    <li>Операций ещё нет.</li>
+{% endfor %}
+</ul>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+<script>
+const labels = {{ chart_labels|tojson }};
+const values = {{ chart_values|tojson }};
+if (document.getElementById("book")) {
+    new Chart(document.getElementById("book"), { type: "bar", data: { labels, datasets: [{ data: values, backgroundColor: "#e0b44a" }] }, options: { plugins: { legend: { display: false } } } });
+}
+document.querySelectorAll("[data-sum]").forEach((button) => {
+    button.addEventListener("click", () => { document.querySelector("[data-amount]").value = button.dataset.sum; });
+});
+document.querySelector("[data-custom]")?.addEventListener("input", (event) => {
+    if (event.target.value) document.querySelector("[data-amount]").value = event.target.value;
+});
+const box = document.querySelector("[data-card-box]");
+document.querySelector("[data-card-open]")?.addEventListener("click", () => box.showModal());
+document.querySelector("[data-card-close]")?.addEventListener("click", () => box.close());
+document.querySelector("[data-card-form]")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const pan = event.target.querySelector("[data-pan]");
+    const exp = event.target.querySelector("[data-exp]");
+    const cvc = event.target.querySelector("[data-cvc]");
+    const error = event.target.querySelector("[data-card-error]");
+    const digits = pan.value.replace(/\s/g, "");
+    if (digits !== "0000000000000000" || exp.value.trim() !== "12/30" || cvc.value.trim() !== "000") {
+        error.textContent = "Нужны только тестовые нули. Реальная карта не уходит на сервер.";
+        pan.value = "";
+        exp.value = "";
+        cvc.value = "";
+        return;
+    }
+    const amount = event.target.querySelector("[data-card-sum]").value;
+    pan.value = "";
+    exp.value = "";
+    cvc.value = "";
+    const body = new URLSearchParams();
+    body.set("csrf_token", document.querySelector('meta[name="csrf-token"]').content);
+    body.set("amount", amount);
+    const response = await fetch("{{ url_for('account.investments') }}", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body });
+    if (response.ok) window.location.reload();
+});
+</script>
+{% endblock %}

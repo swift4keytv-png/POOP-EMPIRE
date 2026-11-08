@@ -1,0 +1,70 @@
+.universe h1 { font-family: Unbounded, Manrope, sans-serif; }
+.universe .figure strong { font-size: 22px; line-height: 1.2; }
+.org { display: grid; gap: 16px; }
+.org-root, .org-node { display: block; padding: 16px; text-align: center; text-decoration: none; color: inherit; border: 1px solid #c9a227; background: #14110c; }
+.org-root { max-width: 420px; margin: 0 auto; background: #1c160c; }
+.org-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.org-node { min-height: 120px; transition: transform .2s ease; }
+.org-node:hover { transform: translateY(-4px); }
+.theme-panda { background: #10241c; border-color: #7dcea0; }
+.theme-honey { background: #2a1c0c; border-color: #e0b15a; }
+.theme-chicken { background: #2a1614; border-color: #e07a5f; }
+.theme-energy { background: #10140f; border-color: #b6f25c; }
+.theme-delivery { background: #1a1608; border-color: #f0c14a; }
+.theme-tech { background: #101820; border-color: #7eb6ff; }
+.theme-industry { background: #1a140c; border-color: #e0b44a; }
+.theme-rival { background: #161616; border-color: #888; }
+.theme-military { background: #10160f; border-color: #8d9a62; color: #e7e2c8; }
+.theme-farm { background: linear-gradient(#1b2414, #10160c); border-color: #8d9a62; }
+.theme-energy { background: linear-gradient(160deg, #1a0d12, #3a1020 40%, #102018); border-color: #ff4d6d; }
+.theme-energy h1 { letter-spacing: .04em; }
+.theme-delivery { background: #101820; border-color: #7eb6d6; }
+.theme-honey { background: #1a1408; border-color: #e0b44a; }
+.theme-air { background: linear-gradient(#f7f9fc, #e7eef8); color: #102033; border-color: #c6a15a; }
+.theme-air::before { content: "POOP AIRLINES  ✈  DEMO"; display: block; font-family: Unbounded, serif; letter-spacing: .18em; color: #0b2a4a; font-size: 13px; }
+.theme-air .plane { text-align: left; cursor: pointer; background: #fff; color: #102033; border: 1px solid #c6a15a; }
+.theme-air .plane:hover { transform: translateY(-3px); }
+@keyframes lift { from { transform: translateX(-8px); } to { transform: translateX(8px); } }
+.theme-air .ticker { animation: lift 2.4s ease-in-out infinite alternate; display: inline-block; }
+.route-list { display: grid; gap: 8px; }
+.route-list .card { text-align: left; cursor: pointer; }
+.news-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.news-list .card { animation: secret-in .35s ease; }
+.news-list .card:hover { transform: translateY(-2px); }
+.theme-air h1, .theme-air p, .theme-air li { color: #102033; }
+.theme-air .figure { background: #fff; color: #102033; }
+.theme-air .figure strong, .theme-air .figure small { color: #102033; }
+.road { list-style: none; margin: 24px 0; padding: 0 0 0 28px; display: grid; gap: 12px; position: relative; }
+.road::before { content: ""; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(#e0b44a, #3a2e16); }
+.road button { width: 100%; text-align: left; padding: 14px 16px; border-radius: 14px; border: 1px solid #c9a227; background: #14110c; color: inherit; cursor: pointer; transition: transform .25s ease, border-color .25s ease; }
+.road button:hover { transform: translateX(4px); }
+.road strong { display: block; font-family: Unbounded, serif; color: #e0b44a; }
+.beat { animation: secret-in .45s ease both; }
+.chapter-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.chapter { padding: 16px; border: 1px solid #c9a227; border-radius: 18px; background: linear-gradient(180deg, #1c1812, #100e0b); }
+.chapter img { width: 100%; height: 220px; object-fit: cover; object-position: center 15%; border-radius: 12px; }
+.chapter h3 { font-family: Unbounded, serif; font-size: 18px; }
+.timeline { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.timeline button { width: 100%; text-align: left; padding: 12px 16px; border: 1px solid #c9a227; background: #14110c; color: inherit; cursor: pointer; }
+.invest-card { width: 420px; padding: 22px; border-radius: 16px; background: linear-gradient(135deg, #1a1a1a, #3a3120); color: #f3e6c4; border: 1px solid #e0b44a; }
+.zone-card { margin-top: 12px; padding: 12px; border: 1px solid #8d9a62; }
+.company-hero { display: grid; grid-template-columns: 280px 1fr; gap: 24px; align-items: center; }
+.company-hero img { width: 100%; height: 320px; object-fit: cover; object-position: center top; border: 4px solid #e0b44a; }
+.theme-panda .company-hero img { border-color: #7dcea0; }
+.theme-honey .company-hero img { border-color: #e0b15a; }
+.tabs { display: flex; gap: 8px; margin: 16px 0; }
+.tabs button.on { outline: 2px solid #e0b44a; }
+.board { width: 100%; border-collapse: collapse; }
+.board td, .board th { padding: 8px; border-bottom: 1px solid #3a3324; text-align: left; }
+.up { color: #8dce6a; }
+.down { color: #e07a5f; }
+.split { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.phone-scene { display: grid; grid-template-columns: 280px 1fr; gap: 28px; align-items: center; }
+.phone { height: 460px; border-radius: 36px; border: 8px solid #d7c39a; background: linear-gradient(180deg, #2a241c, #0e0c0a 40%, #1a2740); display: grid; place-items: end center; box-shadow: 0 20px 50px rgba(0,0,0,.35); }
+.phone span { margin-bottom: 28px; letter-spacing: .2em; }
+.gift { border: 1px solid #e0b44a; padding: 24px; background: #14110c; color: inherit; }
+.exchange canvas, .universe canvas { background: #100e0c; margin: 12px 0; }
+.russia-map { height: 640px; margin: 16px 0; border: 1px solid #e0b44a; }
+.plant-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; position: relative; }
+.plant-list .pin { position: static; transform: none; }
+.ticker { letter-spacing: .18em; color: #e0b44a; }

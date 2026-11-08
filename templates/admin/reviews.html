@@ -1,0 +1,13 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Отзывы</h1>
+{% for review in reviews %}
+<form method="post" action="{{ url_for('admin.moderate') }}" class="admin-line">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="id" value="{{ review.id }}">
+    <span>{{ review.author }} · {{ review.rating }} · {{ review.text }}</span>
+    <label><input type="checkbox" name="approved" value="1" {% if review.approved %}checked{% endif %}> опубликован</label>
+    <button class="btn" type="submit">Сохранить</button>
+</form>
+{% endfor %}
+{% endblock %}

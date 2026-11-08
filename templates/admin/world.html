@@ -1,0 +1,57 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Вселенная: горилла, авиация, хроника</h1>
+<p>Игровые статусы и DEMO-рейсы. Реальных операций и билетов здесь нет.</p>
+<h2>Карта влияния</h2>
+{% for row in zones %}
+<form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="kind" value="zone">
+    <input type="hidden" name="id" value="{{ row.id }}">
+    <p>{{ row.region }} · {{ row.title }}</p>
+    <input name="status" value="{{ row.status }}">
+    <input name="influence" type="number" value="{{ row.influence }}">
+    <textarea name="story">{{ row.story }}</textarea>
+    <button class="btn" type="submit">Сохранить</button>
+</form>
+{% endfor %}
+<h2>Борта</h2>
+{% for row in planes %}
+<form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="kind" value="plane">
+    <input type="hidden" name="id" value="{{ row.id }}">
+    <p>{{ row.name }}</p>
+    <input name="status" value="{{ row.status }}">
+    <input name="note" value="{{ row.note }}">
+    <button class="btn" type="submit">Сохранить</button>
+</form>
+{% endfor %}
+<h2>Маршруты</h2>
+{% for row in routes %}
+<form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="kind" value="route">
+    <input type="hidden" name="id" value="{{ row.id }}">
+    <p>{{ row.origin }} → {{ row.destination }}</p>
+    <input name="status" value="{{ row.status }}">
+    <input name="per_week" type="number" value="{{ row.per_week }}">
+    <input name="note" value="{{ row.note }}">
+    <button class="btn" type="submit">Сохранить</button>
+</form>
+{% endfor %}
+<h2>Хроника</h2>
+{% for row in events %}
+<form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="kind" value="year">
+    <input type="hidden" name="id" value="{{ row.id }}">
+    <input name="year" type="number" value="{{ row.year }}">
+    <input name="title" value="{{ row.title }}">
+    <textarea name="body">{{ row.body }}</textarea>
+    <button class="btn" type="submit">Сохранить</button>
+</form>
+{% endfor %}
+<h2>Последние инвестиционные операции</h2>
+<ul>{% for row in ledger %}<li>{{ row.created_at }} · #{{ row.user_id }} · {{ row.kind }} · {{ row.amount_kop }} · {{ row.note }}</li>{% else %}<li>Пока пусто.</li>{% endfor %}</ul>
+{% endblock %}

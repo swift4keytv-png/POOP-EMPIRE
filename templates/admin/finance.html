@@ -1,0 +1,40 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Финансовая легенда</h1>
+<p>Эти записи — вымысел. Выручка магазина на витрине считается из заказов и здесь не редактируется: сейчас она {{ fin.revenue_kop|money }}.</p>
+<form method="post" class="stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Раздел
+        <select name="section">
+            {% for key in ['capital','valuation','revenue_fiction','profit_fiction','operation','investment','asset','expense','income','forecast','deal'] %}
+            <option>{{ key }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <label>Название<input name="title" required></label>
+    <label>Сумма, целые рубли<input name="amount" required></label>
+    <label>Период<input name="period"></label>
+    <label>Пояснение<input name="note"></label>
+    <button class="btn btn-gold" type="submit">Добавить запись</button>
+</form>
+<table>
+    <thead><tr><th>Раздел</th><th>Название</th><th>Сумма</th><th></th></tr></thead>
+    <tbody>
+    {% for row in rows %}
+    <tr>
+        <td>{{ row.section }}</td>
+        <td>{{ row.title }}</td>
+        <td>{{ row.amount_rub|rubbig }}</td>
+        <td>
+            <form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="id" value="{{ row.id }}">
+                <button class="btn" type="submit">Удалить</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

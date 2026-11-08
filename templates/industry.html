@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}POOP INDUSTRY RUSSIA{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/group.css') }}">
+{% endblock %}
+{% block content %}
+<section class="wrap">
+    <p class="eyebrow">Промышленная империя Артура · DEMO</p>
+    <h1>POOP INDUSTRY RUSSIA</h1>
+    <p>На карте настоящие очертания России и города. Сами заводы вымышленные: это не адреса действующих предприятий и не GPS.</p>
+    <div class="figures">
+        <article class="figure fiction"><small>DEMO · заводов</small><strong>{{ plants|length }}</strong></article>
+        <article class="figure fiction"><small>DEMO · регионов в легенде</small><strong>{{ regions }}</strong></article>
+        <article class="figure fiction"><small>DEMO · сотрудников</small><strong>{{ staff }}</strong></article>
+        <article class="figure fiction"><small>DEMO · выручка цехов</small><strong>{{ worth|rubbig }}</strong></article>
+    </div>
+    <div id="russia-map" class="russia-map"></div>
+    <article class="plant-card" data-plant>
+        <h2>Выберите завод</h2>
+        <p>Точка на карте или город в списке открывают карточку.</p>
+    </article>
+    <div class="plant-list">
+        {% for plant in plants %}
+        <button class="pin" type="button"
+            data-name="{{ plant.name }}" data-city="{{ plant.city }}" data-region="{{ plant.region }}"
+            data-year="{{ plant.founded }}" data-boss="{{ plant.boss }}" data-staff="{{ plant.staff }}"
+            data-capacity="{{ plant.capacity }}" data-products="{{ plant.products }}"
+            data-innovation="{{ plant.innovation }}" data-revenue="{{ plant.revenue_rub|rubbig }}"
+            data-status="{{ plant.status }}" data-kind="{{ plant.kind }}"
+            data-lat="{{ plant.lat or '' }}" data-lng="{{ plant.lng or '' }}">{{ plant.city }}</button>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map = L.map("russia-map").setView([62, 96], 3);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "&copy; OpenStreetMap" }).addTo(map);
+document.querySelectorAll(".pin").forEach((pin) => {
+    const lat = Number(pin.dataset.lat);
+    const lng = Number(pin.dataset.lng);
+    if (!lat || !lng) return;
+    L.marker([lat, lng]).addTo(map).bindPopup(`${pin.dataset.city}: ${pin.dataset.name}`).on("click", () => pin.click());
+});
+</script>
+{% endblock %}

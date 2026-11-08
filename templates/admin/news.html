@@ -1,0 +1,32 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Новости</h1>
+{% for post in posts %}
+<form method="post" class="stack admin-card">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input name="slug" value="{{ post.slug }}">
+    <input name="title" value="{{ post.title }}">
+    <input name="company" value="{{ post.company_slug or '' }}" placeholder="slug компании">
+    <input name="category" value="{{ post.category or '' }}" placeholder="категория">
+    <input name="excerpt" value="{{ post.excerpt }}">
+    <label>Показать с <input type="datetime-local" name="publish_at" value="{{ post.publish_at.strftime('%Y-%m-%dT%H:%M') if post.publish_at else '' }}"></label>
+    <textarea name="body">{{ post.body }}</textarea>
+    <label><input type="checkbox" name="published" value="1" {% if post.is_published %}checked{% endif %}> опубликована</label>
+    <button class="btn" type="submit">Сохранить</button>
+    <button class="btn" name="delete" value="1" type="submit">Удалить</button>
+</form>
+{% endfor %}
+<h2>Новая</h2>
+<form method="post" class="stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input name="slug" placeholder="slug" required>
+    <input name="title" placeholder="заголовок" required>
+    <input name="company" placeholder="slug компании">
+    <input name="category" placeholder="категория" value="империя">
+    <input name="excerpt">
+    <label>Показать с <input type="datetime-local" name="publish_at"></label>
+    <textarea name="body"></textarea>
+    <label><input type="checkbox" name="published" value="1" checked> опубликована</label>
+    <button class="btn btn-gold" type="submit">Добавить</button>
+</form>
+{% endblock %}

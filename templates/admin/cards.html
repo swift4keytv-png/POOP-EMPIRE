@@ -1,0 +1,43 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Какашечные карты и уровни скидок</h1>
+<h2>Уровни</h2>
+{% for tier in tiers %}
+<form method="post" action="{{ url_for('admin.save_tier') }}" class="admin-line">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="id" value="{{ tier.id }}">
+    <input name="name" value="{{ tier.name }}">
+    <input name="discount" type="number" value="{{ tier.discount_percent }}">
+    <input name="tagline" value="{{ tier.tagline }}">
+    <label><input type="checkbox" name="active" value="1" {% if tier.is_active %}checked{% endif %}> активен</label>
+    <button class="btn" type="submit">Сохранить уровень</button>
+</form>
+{% endfor %}
+<h2>Выпущенные карты</h2>
+<table>
+    <thead><tr><th>Номер</th><th>Держатель</th><th>Уровень</th><th>Бонусы, ₽</th><th></th></tr></thead>
+    <tbody>
+    {% for card in cards %}
+    <tr>
+        <td colspan="5">
+            <form method="post" class="admin-line">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="id" value="{{ card.id }}">
+                <span>{{ card.number }}</span>
+                <input name="holder" value="{{ card.holder_name }}">
+                <select name="tier_id">
+                    {% for tier in tiers %}
+                    <option value="{{ tier.id }}" {% if card.tier_id == tier.id %}selected{% endif %}>{{ tier.name }}</option>
+                    {% endfor %}
+                </select>
+                <input name="bonus" value="{{ '%.2f'|format(card.bonus_kop / 100) }}">
+                <button class="btn" type="submit">Записать</button>
+            </form>
+        </td>
+    </tr>
+    {% else %}
+    <tr><td>Карт ещё нет.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>POOP WHEEL</h1>
+<p>Вес делит шанс. Сумма активных весов: {{ total }}.</p>
+{% for prize in prizes %}
+<form method="post" class="admin-line">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="id" value="{{ prize.id }}">
+    <input name="title" value="{{ prize.title }}">
+    <input name="amount" type="number" value="{{ prize.amount }}">
+    <input name="weight" type="number" value="{{ prize.weight }}">
+    <label><input type="checkbox" name="active" value="1" {% if prize.is_active %}checked{% endif %}> активен</label>
+    <span>{{ '%.1f'|format(prize.weight / total * 100 if prize.is_active else 0) }}%</span>
+    <button class="btn" type="submit">Сохранить</button>
+</form>
+{% endfor %}
+{% endblock %}

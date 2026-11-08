@@ -1,0 +1,18 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Сводка штаба</h1>
+<ul class="admin-stats">
+    <li>Заказов {{ orders }}, из них живых {{ live }}</li>
+    <li>Карт {{ cards }}</li>
+    <li>Пользователей {{ users }}</li>
+    <li>Товаров {{ products }}</li>
+    <li>Выручка магазина {{ fin.revenue_kop|money }}</li>
+</ul>
+<form method="post" action="{{ url_for('admin.settings') }}" class="stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Название сайта<textarea name="brand">{{ site.brand }}</textarea></label>
+    <label>Корпорация<input name="corp" value="{{ site.corp }}"></label>
+    <label>Слоган<textarea name="slogan">{{ site.slogan }}</textarea></label>
+    <button class="btn btn-gold" type="submit">Сохранить бренд</button>
+</form>
+{% endblock %}

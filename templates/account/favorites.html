@@ -1,0 +1,18 @@
+{% extends "account/_layout.html" %}
+{% block account %}
+<h1>Избранное</h1>
+<div class="grid-3">
+{% for row in rows %}
+<article class="product-card">
+    <a href="{{ url_for('catalog.product', slug=row.product.slug) }}">{{ row.product.name }}</a>
+    <p>{{ row.product.price_kop|money }}</p>
+    <form action="{{ url_for('account.favorite_toggle', product_id=row.product.id) }}" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn" type="submit">Убрать</button>
+    </form>
+</article>
+{% else %}
+<p>Список пуст.</p>
+{% endfor %}
+</div>
+{% endblock %}

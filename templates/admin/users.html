@@ -1,0 +1,13 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Пользователи</h1>
+{% for user in users %}
+<form method="post" class="admin-line">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="id" value="{{ user.id }}">
+    <span>{{ user.email }} · {{ user.name }}{% if user.is_admin %} · админ{% endif %}</span>
+    <label><input type="checkbox" name="blocked" value="1" {% if user.is_blocked %}checked{% endif %}> блок</label>
+    <button class="btn" type="submit">Сохранить</button>
+</form>
+{% endfor %}
+{% endblock %}

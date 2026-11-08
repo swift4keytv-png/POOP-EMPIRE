@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Корзина — {{ site.corp }}{% endblock %}
+{% block content %}
+<section class="wrap">
+    <h1>Корзина</h1>
+    {% if not priced.lines %}
+    <p>Корзина пуста. <a href="{{ url_for('catalog.index') }}">В каталог</a></p>
+    {% else %}
+    <table>
+        <thead><tr><th>Товар</th><th>Цена</th><th>Количество</th><th>Сумма</th></tr></thead>
+        <tbody>
+        {% for line in priced.lines %}
+        <tr>
+            <td><a href="{{ url_for('catalog.product', slug=line.product.slug) }}">{{ line.product.name }}</a></td>
+            <td>{{ line.product.price_kop|money }}</td>
+            <td>
+                <form action="{{ url_for('shop.cart_update') }}" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="product_id" value="{{ line.product.id }}">
+                    <input type="number" name="qty" value="{{ line.qty }}" min="0">
+                    <button class="btn" type="submit">Обновить</button>
+                </form>
+            </td>
+            <td>{{ line.line_kop|money }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <form action="{{ url_for('shop.cart_promo') }}" method="post" class="inline">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input name="code" placeholder="Промокод" value="{{ priced.promo_code }}">
+        <button class="btn" type="submit">Применить</button>
+    </form>
+    <dl class="totals">
+        <dt>Товары</dt><dd>{{ priced.subtotal|money }}</dd>
+        <dt>Карта {% if priced.card %}{{ priced.card.tier.name }} {{ priced.card_percent }}%{% else %}не выпущена{% endif %}</dt><dd>−{{ priced.card_off|money }}</dd>
+        <dt>Промокод {{ priced.promo_code }}</dt><dd>−{{ priced.promo_off|money }}</dd>
+        {% if priced.free_ship %}<dt>Бесплатная доставка с колеса</dt><dd>будет в заказе</dd>{% endif %}
+    </dl>
+    <a class="btn btn-gold" href="{{ url_for('shop.checkout') }}">Оформить заказ</a>
+    {% endif %}
+</section>
+{% endblock %}

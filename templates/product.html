@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% from "_macros.html" import card with context %}
+{% block title %}{{ item.name }} — {{ site.corp }}{% endblock %}
+{% block content %}
+<article class="wrap product-page">
+    <div class="gallery">
+        {% for image in item.images if image.path %}
+        <img src="{{ url_for('static', filename=image.path) }}" alt="{{ item.name }}">
+        {% else %}
+        <p class="card">Фотографии товара в папке проекта нет. Случайная картинка не подставлена. Описание и заказ ниже работают.</p>
+        {% endfor %}
+    </div>
+    <div>
+        <p class="eyebrow">{{ item.category.name }} · {{ item.sku }}</p>
+        <h1>{{ item.name }}</h1>
+        {% if item.is_cereal %}
+        <ul class="slogans">
+            <li>Тишка одобряет!</li>
+            <li>Завтрак настоящего миллиардера.</li>
+            <li>Хруст, который заслужил даже кот.</li>
+        </ul>
+        {% endif %}
+        <p class="lead">{{ item.short }}</p>
+        <p class="price-row"><strong>{{ item.price_kop|money }}</strong>{% if item.old_price_kop %}<s>{{ item.old_price_kop|money }}</s>{% endif %}</p>
+        <p>На складе: {{ item.stock }}</p>
+        {% if item.age_restricted %}<p class="pill">18+. В корзину не добавляется.</p>{% endif %}
+        {% if item.purchasable %}
+        <form action="{{ url_for('shop.cart_add') }}" method="post" class="buy">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="product_id" value="{{ item.id }}">
+            <label>Количество <input type="number" name="qty" value="1" min="1" max="{{ item.stock }}"></label>
+            <button class="btn btn-gold" type="submit">Купить</button>
+        </form>
+        {% endif %}
+        <h2>Описание</h2>
+        <p>{{ item.description|nl2br }}</p>
+        {% if item.composition %}
+        <h2>Состав и характеристики</h2>
+        <p>{{ item.composition|nl2br }}</p>
+        {% endif %}
+    </div>
+</article>
+<section class="wrap">
+    <h2>Отзывы</h2>
+    {% for review in reviews %}
+    <blockquote class="review"><strong>{{ review.author }} · {{ review.rating }}/5</strong><p>{{ review.text }}</p></blockquote>
+    {% else %}<p>Пока нет опубликованных отзывов.</p>{% endfor %}
+    <form method="post" class="stack">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Оценка
+            <select name="rating">{% for n in [5,4,3,2,1] %}<option>{{ n }}</option>{% endfor %}</select>
+        </label>
+        <label>Текст<textarea name="text" required minlength="4"></textarea></label>
+        <button class="btn" type="submit">Отправить отзыв</button>
+    </form>
+</section>
+{% if related %}
+<section class="wrap">
+    <h2>Рядом в категории</h2>
+    <div class="grid-4">{% for product in related %}{{ card(product) }}{% endfor %}</div>
+</section>
+{% endif %}
+{% endblock %}

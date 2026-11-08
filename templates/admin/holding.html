@@ -1,0 +1,20 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Холдинг и биржа</h1>
+<p>Цены и выручка — DEMO. Биржа пересчитывает котировку на сервере от сохранённой цены.</p>
+{% for row in companies %}
+<form method="post" class="stack admin-card">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="id" value="{{ row.id }}">
+    <p>{{ row.ticker }} · {{ row.slug }}</p>
+    <label>Название<input name="name" value="{{ row.name }}"></label>
+    <label>Руководитель<input name="boss" value="{{ row.boss }}"></label>
+    <label>Описание<textarea name="summary">{{ row.summary }}</textarea></label>
+    <label>DEMO · сотрудники<input name="staff" type="number" value="{{ row.staff }}"></label>
+    <label>DEMO · выручка, ₽<input name="revenue" type="number" value="{{ row.revenue_demo }}"></label>
+    <label>Цена акции, ₽<input name="price" type="number" value="{{ row.price_kop // 100 }}"></label>
+    <label><input type="checkbox" name="active" value="1" {% if row.is_active %}checked{% endif %}> показывать</label>
+    <button class="btn" type="submit">Сохранить</button>
+</form>
+{% endfor %}
+{% endblock %}

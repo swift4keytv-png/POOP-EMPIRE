@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Руководство и партнёры{% endblock %}
+{% block content %}
+<section class="wrap">
+    <p class="eyebrow">{{ site.corp }}</p>
+    <h1>Руководство и партнёры</h1>
+    <p class="lead">Лица штаба. Текст про Руслана — фирменная шутка образа, а не режим наблюдения.</p>
+    <div class="grid-4 people">
+        {% for person in people %}
+        <article class="person boss-card">
+            <a href="{{ url_for('main.partner', slug=person.slug) }}">
+                <img src="{{ url_for('static', filename=person.photo) }}" alt="{{ person.name }}">
+            </a>
+            <strong>{{ person.name }}</strong>
+            <span>{{ person.title }}</span>
+            <p>{{ person.role }}</p>
+            {% if links.get(person.slug) %}
+            <div class="boss-links">
+                {% for href, label in links.get(person.slug, []) %}
+                <a class="btn btn-gold" href="{{ href }}"><span>Перейти к компании</span><small>{{ label }}</small></a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

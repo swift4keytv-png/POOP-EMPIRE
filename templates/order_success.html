@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Заказ {{ order.number }}{% endblock %}
+{% block content %}
+<section class="wrap">
+    <h1>Заказ {{ order.number }} записан</h1>
+    <section class="tracker" data-delivery="{{ order.number }}">
+        <h2>POOP DELIVERY · {{ order.courier_name or 'Сергей Любин' }}</h2>
+        <p class="scooter-line"><span class="scooter" data-scooter>🛵</span></p>
+        <p data-delivery-title>Заказ оформлен</p>
+        <p data-delivery-hint></p>
+        <p class="muted">Демонстрация по таймеру. Это не GPS и не обещание живого курьера.</p>
+        <ul data-delivery-log></ul>
+    </section>
+    <p>Статус: {{ order.status }}. Платёж демонстрационный, списания нет.</p>
+    <table>
+        <thead><tr><th>Позиция</th><th>Кол-во</th><th>Цена</th></tr></thead>
+        <tbody>
+        {% for item in order.items %}
+        <tr><td>{{ item.name }}</td><td>{{ item.qty }}</td><td>{{ item.price_kop|money }}</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <dl class="totals">
+        <dt>Товары</dt><dd>{{ order.subtotal_kop|money }}</dd>
+        <dt>Скидка карты {{ order.card_number }}</dt><dd>−{{ order.card_discount_kop|money }}</dd>
+        <dt>Промокод {{ order.promo_code }}</dt><dd>−{{ order.promo_discount_kop|money }}</dd>
+        <dt>Бонусы</dt><dd>−{{ order.bonus_spent_kop|money }}</dd>
+        <dt>Доставка {{ order.delivery_name }}</dt><dd>{{ order.delivery_fee_kop|money }}</dd>
+        <dt>Итого</dt><dd>{{ order.total_kop|money }}</dd>
+    </dl>
+</section>
+{% endblock %}

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=1280">
+    <title>{% block title %}{{ site.brand }}{% endblock %}</title>
+    <meta name="description" content="{{ site.slogan }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/empire.css') }}">
+    {% block head %}{% endblock %}
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+    <div class="topbar">
+        <div class="wrap topbar-row">
+            <span>{{ site.corp }}</span>
+            <span>Кабинетный режим: основатель не выходит гулять</span>
+            <span>Витрина · карты · финансы</span>
+        </div>
+    </div>
+    <header class="header">
+        <div class="wrap header-row">
+            <a class="logo" href="{{ url_for('main.home') }}">
+                <span class="logo-mark">PE</span>
+                <span><strong>POOP EMPIRE</strong><small>GROUP</small></span>
+            </a>
+            <form class="search" action="{{ url_for('catalog.index') }}" method="get">
+                <i data-lucide="search"></i>
+                <input name="q" value="{{ request.args.get('q', '') }}" placeholder="Поиск по империи" autocomplete="off" data-suggest>
+                <div class="suggest" hidden></div>
+            </form>
+            <div class="tools">
+                {% if current_user.is_authenticated and current_user.card %}
+                <span class="tier-pill">{{ current_user.card.tier.name }} −{{ current_user.card.tier.discount_percent }}%</span>
+                {% endif %}
+                <a href="{{ url_for('catalog.compare') }}"><i data-lucide="git-compare"></i> <span data-compare-count>{{ compare_count }}</span></a>
+                <a href="{{ url_for('account.favorites') if current_user.is_authenticated else url_for('auth.login') }}"><i data-lucide="heart"></i> <span data-fav-count>{{ fav_count }}</span></a>
+                <a href="{{ url_for('shop.cart') }}"><i data-lucide="shopping-bag"></i> <span data-cart-count>{{ cart_count }}</span></a>
+                <a href="{{ url_for('account.index') if current_user.is_authenticated else url_for('auth.login') }}"><i data-lucide="user"></i> Кабинет</a>
+            </div>
+        </div>
+        <nav class="nav">
+            <div class="wrap nav-row">
+                <a class="{% if request.endpoint == 'catalog.index' %}on{% endif %}" href="{{ url_for('catalog.index') }}">Каталог</a>
+                <a class="{% if request.endpoint == 'main.finance' %}on{% endif %}" href="{{ url_for('main.finance') }}">Финансовая империя</a>
+                <a class="{% if request.endpoint == 'main.team' %}on{% endif %}" href="{{ url_for('main.team') }}">Руководство</a>
+                <a href="{{ url_for('catalog.product', slug='tishkiny-hlopya') }}">Тишкины хлопья</a>
+                <a class="{% if request.endpoint == 'main.promos' %}on{% endif %}" href="{{ url_for('main.promos') }}">Промокоды</a>
+                <a class="{% if request.endpoint == 'main.delivery' %}on{% endif %}" href="{{ url_for('main.delivery') }}">Доставка</a>
+                <a class="{% if request.endpoint == 'play.wheel' %}on{% endif %}" href="{{ url_for('play.wheel') }}">POOP WHEEL</a>
+                <a class="{% if request.endpoint == 'play.casino' %}on{% endif %}" href="{{ url_for('play.casino') }}">Казино</a>
+                <a class="{% if request.endpoint == 'play.industry' %}on{% endif %}" href="{{ url_for('play.industry') }}">Заводы</a>
+                <a class="{% if request.endpoint == 'main.charity' %}on{% endif %}" href="{{ url_for('main.charity') }}">Пандам</a>
+                <a class="{% if request.endpoint == 'main.news' %}on{% endif %}" href="{{ url_for('main.news') }}">Новости</a>
+                <a class="{% if request.endpoint == 'group.timeline' %}on{% endif %}" href="{{ url_for('group.timeline') }}">История компаний</a>
+                <a class="{% if request.endpoint == 'main.about' %}on{% endif %}" href="{{ url_for('main.about') }}">О корпорации</a>
+                <a class="{% if request.endpoint == 'group.holding' %}on{% endif %}" href="{{ url_for('group.holding') }}">Холдинг</a>
+                <a class="{% if request.endpoint == 'group.exchange' %}on{% endif %}" href="{{ url_for('group.exchange') }}">Биржа</a>
+                <a class="{% if request.endpoint == 'main.contacts' %}on{% endif %}" href="{{ url_for('main.contacts') }}">Контакты</a>
+                {% if current_user.is_authenticated and current_user.is_admin %}
+                <a href="{{ url_for('admin.dashboard') }}">Админка</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="wrap flashes">
+            {% for cat, text in messages %}
+            <p class="flash {{ cat }}">{{ text }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="footer">
+        <div class="wrap footer-grid">
+            <div>
+                <strong>{{ site.corp }}</strong>
+                <p>{{ site.slogan }}</p>
+            </div>
+            <div>
+                <a href="{{ url_for('main.team') }}">Руководство и партнёры</a>
+                <a href="{{ url_for('main.finance') }}">Финансовая империя</a>
+                <a href="{{ url_for('main.charity') }}">Журнал помощи пандам</a>
+            </div>
+            <form action="{{ url_for('main.newsletter') }}" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label>Рассылка штаба<input type="email" name="email" required placeholder="почта"></label>
+                <button class="btn btn-gold" type="submit">Подписаться</button>
+            </form>
+        </div>
+        <button type="button" class="secret-mark" data-secret>Секрет империи</button>
+    </footer>
+    <dialog class="secret-layer" data-secret-box>
+        <button type="button" class="secret-x" data-secret-close aria-label="Закрыть">×</button>
+        <img src="{{ url_for('static', filename='images/secret-empire.jpg') }}" alt="">
+    </dialog>
+    {% if show_tishka_ad %}
+    <aside class="float-ad" id="tishka-ad">
+        <button class="float-x" type="button" data-close-ad aria-label="Закрыть">×</button>
+        <img src="{{ tishka_photo }}" alt="Кот Тишка">
+        <p class="float-copy">{{ site.ad_text }}</p>
+        <a class="btn btn-gold" href="{{ site.ad_link }}">К хлопьям</a>
+    </aside>
+    {% endif %}
+    <div class="panda">
+        <div class="panda-panel" data-panda-panel hidden>
+            <div class="panda-head">
+                <strong>🐼 Панда штаба</strong>
+                <span>
+                    <button type="button" data-panda-clear>Очистить</button>
+                    <button type="button" class="panda-x" data-panda-close aria-label="Закрыть чат">×</button>
+                </span>
+            </div>
+            <div class="panda-log" data-panda-log></div>
+            <div class="chips" data-asks>
+                <button type="button" data-chip>🏢 Какие компании входят в POOP EMPIRE?</button>
+                <button type="button" data-chip>👑 Кто руководит империей?</button>
+                <button type="button" data-chip>🛒 Что можно купить в магазине?</button>
+                <button type="button" data-chip>🚚 Как узнать статус доставки?</button>
+                <button type="button" data-chip>📦 Как работает самовывоз?</button>
+                <button type="button" data-more>Ещё вопросы</button>
+                <div data-more-box hidden>
+                    <button type="button" data-chip>💳 Как пополнить какашечную карту?</button>
+                    <button type="button" data-chip>🎰 Как получить POOP COINS?</button>
+                    <button type="button" data-chip>✈️ Расскажи про POOP AIRLINES.</button>
+                    <button type="button" data-chip>📰 Какие новости империи?</button>
+                    <button type="button" data-chip>🐼 Что такое PANDA GROUP?</button>
+                    <button type="button" data-chip>Какие акции есть на бирже?</button>
+                    <button type="button" data-chip>Где история компаний?</button>
+                </div>
+            </div>
+            <form class="panda-form" data-panda-form>
+                <input name="message" placeholder="Спросите своими словами" required>
+                <button class="btn btn-gold" type="submit">Отправить</button>
+            </form>
+        </div>
+        <button type="button" class="panda-btn" data-panda-open><i data-lucide="paw-print"></i> Панда</button>
+    </div>
+    <div class="arrive" id="arrive" hidden>
+        <p data-arrive-text></p>
+        <button type="button" data-arrive-close>Закрыть</button>
+    </div>
+    <script src="{{ url_for('static', filename='js/empire.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/play.js') }}"></script>
+    <script>if (window.lucide) lucide.createIcons();</script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

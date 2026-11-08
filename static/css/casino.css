@@ -1,0 +1,242 @@
+.casino-app {
+    position: relative;
+    margin: -8px auto 0;
+    max-width: 1280px;
+    min-height: 860px;
+    padding: 28px 28px 64px;
+    overflow: hidden;
+    color: #f6e7c1;
+    background:
+        radial-gradient(900px 420px at 50% -10%, rgba(176, 108, 255, 0.28), transparent 60%),
+        radial-gradient(700px 280px at 80% 20%, rgba(230, 195, 106, 0.16), transparent 55%),
+        #07060b;
+    border: 1px solid rgba(230, 195, 106, 0.45);
+    box-shadow: inset 0 0 80px rgba(230, 195, 106, 0.08), 0 30px 80px rgba(0, 0, 0, 0.45);
+    animation: hall-in 0.9s ease both;
+}
+.casino-app::before,
+.casino-app::after {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(230, 195, 106, 0.25);
+    pointer-events: none;
+}
+.sky { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.casino-top, .ticker, .floor, .vip-room, .player-board, .stage, .big-win { position: relative; z-index: 1; }
+.casino-brand {
+    margin: 0;
+    font-size: 78px;
+    line-height: 0.9;
+    letter-spacing: 0.08em;
+    text-align: center;
+    color: #f3d48a;
+    text-shadow: 0 0 18px rgba(243, 212, 138, 0.85), 0 0 42px rgba(176, 108, 255, 0.45);
+    animation: glow 2.8s ease-in-out infinite;
+}
+.casino-note { text-align: center; color: #cbb992; }
+.casino-hud { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; }
+.casino-hud div, .hud-coin {
+    min-width: 120px;
+    padding: 10px 14px;
+    border: 1px solid rgba(230, 195, 106, 0.5);
+    background: rgba(0, 0, 0, 0.35);
+    box-shadow: 0 0 16px rgba(230, 195, 106, 0.15);
+}
+.casino-hud span { display: block; font-size: 12px; letter-spacing: 0.12em; color: #bba777; }
+.casino-hud strong { font-size: 28px; color: #ffe7a3; }
+.xp-line { height: 8px; margin: 14px auto 0; max-width: 640px; background: #1a1424; border: 1px solid #6d5424; }
+.xp-line i { display: block; height: 100%; background: linear-gradient(90deg, #b06cff, #f3d48a); }
+.ticker { display: flex; gap: 28px; overflow: hidden; height: 28px; margin: 18px 0 22px; white-space: nowrap; color: #f3d48a; }
+.ticker span { animation: ticker 18s linear infinite; }
+.floor { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.machine {
+    min-height: 230px;
+    padding: 18px;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    border: 1px solid rgba(230, 195, 106, 0.55);
+    background:
+        linear-gradient(180deg, rgba(255, 220, 140, 0.14), transparent 28%),
+        linear-gradient(180deg, #1a140f, #09080c 70%);
+    box-shadow: inset 0 0 0 4px #2a2112, 0 16px 0 #050308, 0 0 24px rgba(176, 108, 255, 0.18);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.machine:hover { transform: translateY(-8px) scale(1.035); box-shadow: inset 0 0 0 4px #e6c36a, 0 22px 0 #050308, 0 0 32px rgba(243, 212, 138, 0.45); }
+.machine strong { display: block; margin-top: 12px; font-size: 28px; letter-spacing: 0.04em; }
+.machine em { color: #d7b6ff; }
+.machine-window, .orb, .vault-mini, .mini-dice, .mini-panda {
+    display: grid;
+    place-items: center;
+    height: 110px;
+    font-size: 34px;
+    background: #050308;
+    border: 2px solid #e6c36a;
+    box-shadow: inset 0 0 24px rgba(243, 212, 138, 0.25);
+}
+.orb { font-size: 72px; animation: idle-spin 5s linear infinite; }
+.mini-wheel {
+    height: 110px;
+    border-radius: 50%;
+    border: 6px solid #e6c36a;
+    background: conic-gradient(#9b1c2e 0 40%, #111 0 80%, #e6c36a 0 100%);
+    animation: idle-spin 8s linear infinite;
+}
+.machine .spin, .stage .spin { animation: pulse 1.2s ease-in-out infinite; }
+.vip-room {
+    margin-top: 28px;
+    padding: 22px;
+    background:
+        radial-gradient(400px 120px at 20% 0, rgba(243, 212, 138, 0.2), transparent),
+        #0c0a08;
+    border: 1px solid #e6c36a;
+}
+.thrones { display: flex; gap: 10px; }
+.thrones span { flex: 1; padding: 18px 8px; text-align: center; border: 1px solid #6d5424; background: linear-gradient(#2a2114, #100e0c); }
+.thrones .lit { color: #1a1204; background: linear-gradient(#ffe7a3, #c7963a); }
+.player-board { margin-top: 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; }
+.player-board ul { margin: 0 0 12px; padding-left: 18px; }
+.badge-list .got { color: #ffe7a3; }
+.stage {
+    padding: 12px 8px 24px;
+    animation: hall-in 0.45s ease both;
+}
+.stage h2 { font-size: 48px; margin: 8px 0; text-shadow: 0 0 16px rgba(243, 212, 138, 0.6); }
+.reels { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; max-width: 760px; }
+.reel { height: 96px; overflow: hidden; background: #050308; border: 2px solid #e6c36a; box-shadow: inset 0 0 18px rgba(243, 212, 138, 0.3); }
+.strip span { display: grid; height: 96px; place-items: center; font-size: 52px; }
+.reel.hit { box-shadow: 0 0 18px #ffe7a3, inset 0 0 18px rgba(243, 212, 138, 0.45); }
+.stage label { display: inline-flex; gap: 8px; align-items: center; margin-right: 12px; }
+.stage input, .stage select { background: #100e14; color: #ffe7a3; border: 1px solid #e6c36a; padding: 8px; }
+.gold-scene { height: 280px; display: grid; place-items: center; perspective: 700px; }
+.poop-orb { font-size: 150px; animation: idle-spin 4.5s linear infinite; filter: drop-shadow(0 0 18px #e6c36a); }
+.poop-orb.rush { animation-duration: 0.28s; }
+.vault {
+    width: 280px;
+    padding: 28px;
+    text-align: center;
+    background: linear-gradient(180deg, #3a301c, #120f0a);
+    border: 8px solid #e6c36a;
+    box-shadow: inset 0 0 0 4px #1a140c, 0 0 30px rgba(243, 212, 138, 0.35);
+}
+.vault strong { display: block; font-size: 54px; }
+.vault.open { animation: vault-pop 0.8s ease; }
+.roulette-box { position: relative; width: 420px; height: 420px; margin: 10px auto; }
+.wheel {
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    border: 12px solid #e6c36a;
+    box-shadow: 0 0 30px rgba(176, 108, 255, 0.35), inset 0 0 20px rgba(0, 0, 0, 0.45);
+}
+.pointer {
+    position: absolute;
+    left: 198px;
+    top: -6px;
+    z-index: 2;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 28px solid #ffe7a3;
+}
+.pocket { text-align: center; font-size: 28px; color: #ffe7a3; }
+.hub {
+    position: absolute;
+    left: 165px;
+    top: 165px;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 3px solid #fff1c4;
+    background: radial-gradient(circle, #ffe7a3, #a9782b);
+    color: #1a1204;
+    font-weight: 700;
+}
+.choices { display: flex; gap: 8px; }
+.choices .red { background: #9b1c2e; color: white; }
+.choices .on { outline: 2px solid #ffe7a3; }
+.dice-table {
+    display: flex;
+    gap: 48px;
+    height: 220px;
+    align-items: center;
+    justify-content: center;
+    perspective: 700px;
+    background: radial-gradient(circle, #2a2114, #07060b 70%);
+    border: 1px solid #6d5424;
+}
+.cube { position: relative; width: 90px; height: 90px; transform-style: preserve-3d; transition: transform 1.2s cubic-bezier(.2,.7,.2,1); }
+.cube .f {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 32px;
+    font-style: normal;
+    background: linear-gradient(#fff8e8, #e7d3a1);
+    color: #1a1204;
+    border: 2px solid #8a6a32;
+}
+.f1 { transform: translateZ(45px); }
+.f6 { transform: rotateY(180deg) translateZ(45px); }
+.f2 { transform: rotateY(-90deg) translateZ(45px); }
+.f5 { transform: rotateY(90deg) translateZ(45px); }
+.f3 { transform: rotateX(90deg) translateZ(45px); }
+.f4 { transform: rotateX(-90deg) translateZ(45px); }
+.doors { display: flex; gap: 18px; }
+.door {
+    width: 160px;
+    height: 240px;
+    color: #ffe7a3;
+    background: linear-gradient(#3a2414, #140e0a);
+    border: 4px solid #e6c36a;
+    font-size: 28px;
+    transition: transform 0.5s ease, background 0.4s ease;
+}
+.door.open { transform: perspective(500px) rotateY(-55deg); background: #241808; }
+.door b { display: block; font-size: 16px; }
+.casino-app .panda-mascot { font-size: 84px; margin: 0; transition: transform 0.4s ease; }
+.casino-app .panda-mascot.happy { transform: translateY(-8px) scale(1.08); }
+.casino-app .panda-mascot.wow { transform: rotate(-8deg) scale(1.15); }
+.casino-app .panda-mascot.sad { transform: translateY(6px) scale(0.94); }
+.big-win {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    background: rgba(0, 0, 0, 0.78);
+}
+.big-win[hidden] { display: none; }
+.big-win p { margin: 0; font-size: 92px; color: #ffe7a3; text-shadow: 0 0 24px #e6c36a, 0 0 40px #b06cff; animation: glow 0.8s ease-in-out infinite; }
+.big-win strong { font-size: 64px; }
+.ach-pop {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 40;
+    padding: 14px 18px;
+    background: #1a140c;
+    color: #ffe7a3;
+    border: 1px solid #e6c36a;
+    box-shadow: 0 0 20px rgba(243, 212, 138, 0.4);
+    animation: hall-in 0.35s ease both;
+}
+.coin-burst {
+    position: fixed;
+    z-index: 25;
+    pointer-events: none;
+    font-size: 22px;
+    animation: fall 1.1s linear forwards;
+}
+@keyframes hall-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes glow { 50% { text-shadow: 0 0 28px #fff1c4, 0 0 60px #b06cff; } }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-120%); } }
+@keyframes idle-spin { to { transform: rotateY(360deg); } }
+@keyframes pulse { 50% { transform: scale(1.06); } }
+@keyframes vault-pop { 40% { transform: scale(1.06); filter: brightness(1.6); } }
+@keyframes fall { to { transform: translateY(70vh) rotate(240deg); opacity: 0.2; } }
+@media (prefers-reduced-motion: reduce) {
+    .casino-app, .ticker span, .orb, .mini-wheel, .poop-orb, .machine .spin { animation: none; }
+}

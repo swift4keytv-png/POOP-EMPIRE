@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+{% block title %}POOP CASINO{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/casino.css') }}">
+{% endblock %}
+{% block content %}
+<div class="casino-app" data-auth="{{ 1 if current_user.is_authenticated else 0 }}">
+    <canvas class="sky" data-sky></canvas>
+    <header class="casino-top">
+        <p class="casino-brand">POOP CASINO</p>
+        <p class="casino-note">Игровой зал POOP EMPIRE. Только виртуальные POOP COINS: без цены, без покупки и без вывода.</p>
+        <div class="casino-hud">
+            <div class="hud-coin">
+                <span>POOP COINS</span>
+                <strong data-coins data-value="{{ panel.coins }}">{{ panel.coins }}</strong>
+            </div>
+            <div><span>Уровень</span><strong data-level>{{ panel.level }}</strong></div>
+            <div><span>VIP</span><strong data-tier>{{ panel.tier }}</strong></div>
+            <div><span>Партий</span><strong data-games>{{ panel.games }}</strong></div>
+            <button class="btn btn-gold" type="button" data-daily {% if not current_user.is_authenticated %}disabled{% endif %}>Ежедневный бонус</button>
+            <button class="btn" type="button" data-coin-open>Пополнить POOP COINS</button>
+            <button class="btn" type="button" data-sound-toggle>Звук: вкл</button>
+        </div>
+        <div class="xp-line" aria-hidden="true"><i data-xp style="width: {{ panel.xp_bar }}%"></i></div>
+    </header>
+
+    <div class="ticker">
+        {% for row in wins %}
+        <span>{{ row.user.name }} выиграл {{ row.payout }} · {{ row.game }}</span>
+        {% else %}
+        <span>Крупных выигрышей пока нет. Табло показывает только реальные партии.</span>
+        {% endfor %}
+    </div>
+
+    <div data-hall>
+        <section class="floor">
+            <button class="machine machine-slots" type="button" data-open="slots">
+                <span class="machine-window">💩 👑 🪙 💎 🏆</span>
+                <strong>POOP SLOTS</strong>
+                <em>Пять барабанов</em>
+            </button>
+            <button class="machine machine-gold" type="button" data-open="golden">
+                <span class="orb">💩</span>
+                <strong>GOLDEN POOP</strong>
+                <em>Золотой множитель</em>
+            </button>
+            <button class="machine machine-vault" type="button" data-open="jackpot">
+                <span class="vault-mini">{{ jackpot }}</span>
+                <strong>TRILLIONAIRE</strong>
+                <em>Сейф империи</em>
+            </button>
+            <button class="machine machine-wheel" type="button" data-open="roulette">
+                <span class="mini-wheel"></span>
+                <strong>POOP ROULETTE</strong>
+                <em>Красное, чёрное, золото</em>
+            </button>
+            <button class="machine machine-dice" type="button" data-open="dice">
+                <span class="mini-dice">⚄ ⚁</span>
+                <strong>POOP DICE</strong>
+                <em>Два кубика</em>
+            </button>
+            <button class="machine machine-panda" type="button" data-open="panda">
+                <span class="mini-panda">🐼</span>
+                <strong>PANDA BONUS</strong>
+                <em>Три двери</em>
+            </button>
+        </section>
+
+        <section class="vip-room" id="vip">
+            <p class="eyebrow">VIP ROOM</p>
+            <h2>Чёрно-золотой зал</h2>
+            <p>Троны, сейф и отдельный автомат. Уровень растёт от партий и достижений: BRONZE, SILVER, GOLD, BLACK, TRILLIONAIRE. Покупка статуса за деньги закрыта.</p>
+            <div class="thrones"><span>BRONZE</span><span>SILVER</span><span>GOLD</span><span>BLACK</span><span class="lit">TRILLIONAIRE</span></div>
+            <button class="machine machine-vip" type="button" data-open="vip">
+                <strong>VIP SLOTS</strong>
+                <em>С уровня GOLD · ставка от {{ rules.vip.min }}</em>
+            </button>
+        </section>
+
+        <section class="player-board">
+            <h2>Игрок</h2>
+            <ul>
+                <li>Уровень <b data-level>{{ panel.level }}</b></li>
+                <li>Опыт <b data-xp-num>{{ panel.xp }}</b></li>
+                <li>Сыграно <b data-games>{{ panel.games }}</b></li>
+                <li>Всего начислено <b data-total>{{ panel.total_win }}</b></li>
+                <li>Лучший заход <b data-best>{{ panel.best }}</b></li>
+                <li>Достижения <b data-badges>{{ panel.badges }}</b></li>
+                <li>Статус <b data-tier>{{ panel.tier }}</b></li>
+            </ul>
+            <h3>Достижения</h3>
+            <ul class="badge-list">
+            {% for item in achievements %}
+                <li class="{% if item.code in have %}got{% endif %}">{{ item.title }} — {{ item.description }}</li>
+            {% endfor %}
+            </ul>
+            <h3>Лидеры по монетам</h3>
+            <table>
+            {% for user in leaders %}
+                <tr><td>{{ user.name }}</td><td>{{ user.poop_coins }}</td><td>{{ user.xp // 100 + 1 if user.xp else 1 }} ур.</td></tr>
+            {% endfor %}
+            </table>
+            <h3>Ваши партии</h3>
+            <ul data-mine>
+            {% for row in mine %}
+                <li>{{ row.game }} · {{ row.bet }} → {{ row.payout }} · {{ row.detail }}</li>
+            {% else %}
+                <li>Партий ещё нет.</li>
+            {% endfor %}
+            </ul>
+        </section>
+    </div>
+
+    <section class="stage" data-stage="slots" hidden>
+        <button class="btn back" type="button" data-close>В зал</button>
+        <h2>POOP SLOTS</h2>
+        <div class="reels">
+            {% for _ in range(5) %}<div class="reel" data-reel><div class="strip"><span>💩</span></div></div>{% endfor %}
+        </div>
+        <p class="stage-msg" data-msg>Три и больше одинаковых символов платят по таблице. Ставка списывается один раз на сервере.</p>
+        <label>Ставка <input type="number" min="{{ rules.slots.min }}" value="{{ rules.slots.min }}" data-bet></label>
+        <button class="btn btn-gold spin" type="button" data-spin="slots">SPIN</button>
+        <button class="btn" type="button" data-autospin>Авто</button>
+        <table class="pay"><tbody>
+        {% for glyph, mult in pay %}<tr><td>{{ glyph }} {{ glyph }} {{ glyph }}</td><td>×{{ mult }}</td><td>четыре ×{{ mult * 2 }}, пять ×{{ mult * 4 }}</td></tr>{% endfor %}
+        </tbody></table>
+    </section>
+
+    <section class="stage" data-stage="golden" hidden>
+        <button class="btn back" type="button" data-close>В зал</button>
+        <h2>GOLDEN POOP</h2>
+        <div class="gold-scene"><div class="poop-orb" data-orb>💩</div></div>
+        <p class="stage-msg" data-msg>Множители: {% for item in rules.golden.multipliers %}×{{ item }} {% endfor %}. Редкие — ×10 и ×25.</p>
+        <label>Ставка <input type="number" min="{{ rules.golden.min }}" value="{{ rules.golden.min }}" data-bet></label>
+        <button class="btn btn-gold spin" type="button" data-spin="golden">ИСПЫТАТЬ УДАЧУ</button>
+    </section>
+
+    <section class="stage" data-stage="jackpot" hidden>
+        <button class="btn back" type="button" data-close>В зал</button>
+        <h2>TRILLIONAIRE JACKPOT</h2>
+        <div class="vault" data-vault>
+            <strong data-pool>{{ jackpot }}</strong>
+            <span>монет в сейфе</span>
+        </div>
+        <p>Участников: <b data-people>{{ jackpot_people }}</b>. Шанс открыть сейф: {{ rules.jackpot.chance }}%. Остальные ставки только увеличивают банк.</p>
+        <p>Последний победитель: <b data-last>{% if jackpot_wins %}{{ jackpot_wins[0].user.name }} · {{ jackpot_wins[0].payout }}{% else %}ещё никто не открывал сейф{% endif %}</b></p>
+        <ul>
+        {% for row in jackpot_wins %}<li>{{ row.user.name }} · {{ row.payout }} · {{ row.created_at.strftime('%d.%m.%Y %H:%M') }}</li>{% else %}<li>История пуста. Демонстрационные победители не подставляются.</li>{% endfor %}
+        </ul>
+        <label>Ставка <input type="number" min="{{ rules.jackpot.min }}" value="{{ rules.jackpot.min }}" data-bet></label>
+        <button class="btn btn-gold spin" type="button" data-spin="jackpot">Открыть сейф</button>
+        <p class="stage-msg" data-msg></p>
+    </section>
+
+    <section class="stage" data-stage="roulette" hidden>
+        <button class="btn back" type="button" data-close>В зал</button>
+        <h2>POOP ROULETTE</h2>
+        <div class="roulette-box">
+            <div class="pointer"></div>
+            <div class="wheel" data-wheel></div>
+            <button class="hub" type="button" data-spin="roulette">Пуск</button>
+            <p class="pocket" data-pocket>сектор</p>
+        </div>
+        <p class="stage-msg" data-msg>Красное ×{{ rules.roulette.red }}, чёрное ×{{ rules.roulette.black }}, золотой ноль ×{{ rules.roulette.gold }}.</p>
+        <label>Ставка <input type="number" min="{{ rules.roulette.min }}" value="20" data-bet></label>
+        <div class="choices">
+            <button class="btn red on" type="button" data-choice="red">Красное</button>
+            <button class="btn" type="button" data-choice="black">Чёрное</button>
+            <button class="btn btn-gold" type="button" data-choice="gold">Золотой сектор</button>
+        </div>
+    </section>
+
+    <section class="stage" data-stage="dice" hidden>
+        <button class="btn back" type="button" data-close>В зал</button>
+        <h2>POOP DICE</h2>
+        <div class="dice-table">
+            {% for n in (0, 1) %}
+            <div class="cube" data-die="{{ n }}">
+                <i class="f f1">1</i><i class="f f2">2</i><i class="f f3">3</i><i class="f f4">4</i><i class="f f5">5</i><i class="f f6">6</i>
+            </div>
+            {% endfor %}
+        </div>
+        <p class="stage-msg" data-msg>Точная сумма платит ×{{ rules.dice.exact }}.</p>
+        <label>Сумма
+            <select data-guess>{% for n in range(2, 13) %}<option {% if n == 7 %}selected{% endif %}>{{ n }}</option>{% endfor %}</select>
+        </label>
+        <label>Ставка <input type="number" min="{{ rules.dice.min }}" value="20" data-bet></label>
+        <button class="btn btn-gold spin" type="button" data-spin="dice">Бросить</button>
+    </section>
+
+    <section class="stage" data-stage="panda" hidden>
+        <button class="btn back" type="button" data-close>В зал</button>
+        <h2>PANDA BONUS</h2>
+        <p class="panda-mascot" data-panda>🐼</p>
+        <div class="doors">
+            <button class="door" type="button" data-door="0"><span>1</span><b></b></button>
+            <button class="door" type="button" data-door="1"><span>2</span><b></b></button>
+            <button class="door" type="button" data-door="2"><span>3</span><b></b></button>
+        </div>
+        <label>Ставка <input type="number" min="{{ rules.panda.min }}" value="20" data-bet></label>
+        <p class="stage-msg" data-msg>За дверями монеты, множитель, подарок, лишний спин колеса или редкий VIP-приз.</p>
+    </section>
+
+    <section class="stage" data-stage="vip" hidden>
+        <button class="btn back" type="button" data-close>В зал</button>
+        <h2>VIP SLOTS</h2>
+        <p>Тот же честный барабан, отдельная история. Дверь открыта со статуса GOLD.</p>
+        <div class="reels">
+            {% for _ in range(5) %}<div class="reel" data-reel><div class="strip"><span>👑</span></div></div>{% endfor %}
+        </div>
+        <p class="stage-msg" data-msg></p>
+        <label>Ставка <input type="number" min="{{ rules.vip.min }}" value="{{ rules.vip.min }}" data-bet></label>
+        <button class="btn btn-gold spin" type="button" data-spin="vip">SPIN</button>
+    </section>
+
+    <dialog class="gift" data-coin-box>
+        <h2>Пополнить POOP COINS</h2>
+        <p>DEMO. Банковская карта не нужна и не принимается. Рублёвый и инвестиционный балансы не меняются.</p>
+        <button class="btn" type="button" data-pack="starter">STARTER · 1 000</button>
+        <button class="btn" type="button" data-pack="bronze">BRONZE · 5 000</button>
+        <button class="btn" type="button" data-pack="gold">GOLD · 15 000</button>
+        <button class="btn" type="button" data-pack="trillionaire">TRILLIONAIRE · 50 000</button>
+        <button class="btn" type="button" data-pack="legend">EMPIRE LEGEND · 100 000</button>
+        <p data-coin-note></p>
+        <h3>История</h3>
+        <ul data-coin-log>
+        {% for row in ledger %}
+            <li>{{ row.created_at.strftime('%d.%m %H:%M') }} · {{ row.kind }} · {{ row.amount }} · {{ row.note }}</li>
+        {% else %}
+            <li>Операций ещё нет.</li>
+        {% endfor %}
+        </ul>
+        <button class="btn" type="button" data-coin-close>Закрыть</button>
+    </dialog>
+    <div class="big-win" data-big hidden>
+        <p data-big-title>BIG WIN</p>
+        <strong data-big-sum>0</strong>
+        <button class="btn btn-gold" type="button" data-big-close>В игровой зал</button>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/casino.js') }}"></script>
+{% endblock %}

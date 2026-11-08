@@ -1,0 +1,20 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Тишкины хлопья</h1>
+{% if item %}
+<form method="post" enctype="multipart/form-data" class="stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Название<input name="name" value="{{ item.name }}"></label>
+    <label>Коротко<textarea name="short">{{ item.short }}</textarea></label>
+    <label>Описание<textarea name="description">{{ item.description }}</textarea></label>
+    <label>Состав<textarea name="composition">{{ item.composition }}</textarea></label>
+    <label>Цена, ₽<input name="price" value="{{ '%.2f'|format(item.price_kop / 100) }}"></label>
+    <label>Склад<input name="stock" type="number" value="{{ item.stock }}"></label>
+    <label><input type="checkbox" name="active" value="1" {% if item.is_active %}checked{% endif %}> В каталоге</label>
+    <label>Ещё кадр в галерею<input type="file" name="image" accept="image/*"></label>
+    <button class="btn btn-gold" type="submit">Сохранить хлопья</button>
+</form>
+{% else %}
+<p>Позиция не найдена. Удалите базу и запустите сайт снова, чтобы сид создал товар.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}История компаний{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/group.css') }}">{% endblock %}
+{% block content %}
+<section class="wrap universe chronicle">
+    <p class="eyebrow">Вымышленная корпоративная история · DEMO · не реестр и не факт</p>
+    <h1>История компаний</h1>
+    <p class="lead">Хроника POOP EMPIRE GROUP. TWO-TOE CHICKEN CORP стоит первой: в этой легенде двухпалые курицы были самой старой компанией и первым направлением, и только потом вырос холдинг Руслана.</p>
+    <ol class="road">
+        {% for event in events %}
+        <li class="beat" style="animation-delay: {{ loop.index0 * 70 }}ms">
+            <button type="button" data-event data-year="{{ event.year }}" data-title="{{ event.title }}" data-body="{{ event.body }}" data-boss="{{ event.boss }}" data-slug="{{ event.company_slug }}">
+                <strong>{{ event.year }}</strong>
+                <span>{{ event.title }}</span>
+                <small>{{ event.boss }}</small>
+            </button>
+        </li>
+        {% endfor %}
+    </ol>
+    <article class="zone-card" data-event-card>
+        <h2>Выберите год на шкале</h2>
+        <p>Событие откроется здесь. Все даты придуманы для презентации.</p>
+    </article>
+    <h2>Компании холдинга</h2>
+    <div class="chapter-grid">
+        {% for row in chapters %}
+        <article class="chapter beat" style="animation-delay: {{ loop.index0 * 50 }}ms">
+            {% if row.photo %}<img src="{{ url_for('static', filename=row.photo) }}" alt="{{ row.boss }}">{% endif %}
+            <p class="eyebrow">{{ row.year }} · DEMO</p>
+            <h3>{{ row.name }}</h3>
+            <p><strong>{{ row.founder }}</strong></p>
+            <p>С чего начали: {{ row.start }}</p>
+            <p>Этапы: {{ row.stages }}</p>
+            <p>Отметка хроники: {{ row.win }}</p>
+            <p>Связь: {{ row.parent }}</p>
+            <a class="btn btn-gold" href="{{ url_for('group.company', slug=row.slug) }}">Открыть компанию</a>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+document.querySelectorAll("[data-event]").forEach((button) => {
+    button.addEventListener("click", () => {
+        const card = document.querySelector("[data-event-card]");
+        const slug = button.dataset.slug;
+        const link = slug ? `<p><a href="/company/${slug}">Открыть компанию</a></p>` : "";
+        card.innerHTML = `<p class="eyebrow">DEMO</p><h2>${button.dataset.year} · ${button.dataset.title}</h2><p>${button.dataset.boss}</p><p>${button.dataset.body}</p>${link}`;
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}История империи{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/group.css') }}">{% endblock %}
+{% block content %}
+<section class="wrap universe">
+    <p class="eyebrow">Художественная хроника · не реестр</p>
+    <h1>История империи</h1>
+    <p>TWO-TOE CHICKEN CORP стоит в начале: в этой легенде двухпалые курицы были первой разработкой, и только потом выросла корпорация Руслана.</p>
+    <ol class="timeline">
+    {% for event in events %}
+        <li>
+            <button type="button" data-event data-body="{{ event.body }}" data-boss="{{ event.boss }}">
+                <strong>{{ event.year }}</strong>
+                <span>{{ event.title }}</span>
+            </button>
+        </li>
+    {% endfor %}
+    </ol>
+    <article class="zone-card" data-event-card>
+        <h2>Выберите год</h2>
+        <p>Карточка откроется здесь.</p>
+    </article>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+document.querySelectorAll("[data-event]").forEach((button) => {
+    button.addEventListener("click", () => {
+        const card = document.querySelector("[data-event-card]");
+        card.innerHTML = `<h2>${button.querySelector("strong").textContent} · ${button.querySelector("span").textContent}</h2><p>${button.dataset.boss}</p><p>${button.dataset.body}</p>`;
+    });
+});
+</script>
+{% endblock %}

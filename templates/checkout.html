@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Заказ — {{ site.corp }}{% endblock %}
+{% block content %}
+<section class="wrap checkout">
+    <h1>Оформление</h1>
+    <p>Оплата демонстрационная: деньги не списываются и банк не присылает успех.</p>
+    {% if not priced.lines %}
+    <p>Сначала положите товар в корзину.</p>
+    {% else %}
+    <form method="post" class="checkout-grid">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="stack">
+            <label>Имя<input name="name" required value="{{ profile.name or '' }}"></label>
+            <label>Почта<input type="email" name="email" required value="{{ profile.email or '' }}"></label>
+            <label>Телефон<input name="phone" required value="{{ profile.phone or '' }}"></label>
+            <label data-city>Город<input name="city" required value="{{ profile.city or '' }}"></label>
+            <label data-address>Адрес<input name="address" required value="{{ profile.address or '' }}"></label>
+            <div data-pickup hidden>
+                <p>Самовывоз из штаба POOP EMPIRE: Максима Горького, 70/1. График: ежедневно 10:00–21:00.</p>
+                <p>Курьер не назначается. Когда заказ будет готов, в кабинете появится уведомление. Готовность наступает по статусу, не в момент оплаты.</p>
+            </div>
+            <fieldset class="choice-set">
+                <legend>Доставка</legend>
+                <div class="choice-grid">
+                {% for method in methods %}
+                <label class="ship-card">
+                    <input type="radio" name="delivery" value="{{ method.slug }}" {% if loop.first %}checked{% endif %}>
+                    <i data-lucide="{% if method.slug == 'pickup' %}store{% elif method.slug == 'express' %}zap{% else %}bike{% endif %}"></i>
+                    <span>
+                        <strong>{{ method.name }}</strong>
+                        <small>{{ method.fee_kop|money }} · {{ method.days }}</small>
+                        <em>{{ method.description }}</em>
+                    </span>
+                </label>
+                {% endfor %}
+                </div>
+            </fieldset>
+            <fieldset class="choice-set">
+                <legend>Оплата</legend>
+                <div class="choice-grid">
+                    <label class="ship-card">
+                        <input type="radio" name="payment" value="demo" checked>
+                        <i data-lucide="credit-card"></i>
+                        <span><strong>Демонстрационная карта</strong><small>Банк не списывает деньги</small></span>
+                    </label>
+                    <label class="ship-card">
+                        <input type="radio" name="payment" value="cash">
+                        <i data-lucide="banknote"></i>
+                        <span><strong>Наличные при получении</strong><small>Отметка в заказе, не касса</small></span>
+                    </label>
+                </div>
+            </fieldset>
+            {% if priced.card %}
+            <label class="ship-card bonus-card"><input type="checkbox" name="spend_bonus" value="1"> <span><strong>Списать бонусы</strong><small>Доступно {{ priced.bonus_balance|money }} на какашечной карте</small></span></label>
+            {% endif %}
+            <label>Комментарий<textarea name="note"></textarea></label>
+            <div class="checkout-actions">
+                <a class="btn" href="{{ url_for('shop.cart') }}">Назад</a>
+                <button class="btn btn-gold" type="submit">Подтвердить заказ</button>
+            </div>
+        </div>
+        <aside class="totals-card">
+            <h2>Расчёт</h2>
+            <p>Товары {{ priced.subtotal|money }}</p>
+            <p>Скидка карты {{ priced.card_percent }}% · −{{ priced.card_off|money }}</p>
+            <p>Промокод −{{ priced.promo_off|money }}</p>
+            <p>Доставка считается по выбранному способу и записывается в заказ.</p>
+            <p>К начислению бонусов: {{ priced.cashback|money }}</p>
+            {% if priced.card %}<p>Карта {{ priced.card.number }}</p>{% else %}<p>Без карты полная цена товаров, если нет промокода.</p>{% endif %}
+        </aside>
+    </form>
+    {% endif %}
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+const pickupBox = document.querySelector("[data-pickup]");
+const addressBox = document.querySelector("[data-address]");
+function paintDelivery() {
+    if (!pickupBox || !addressBox) return;
+    const chosen = document.querySelector('input[name="delivery"]:checked');
+    const pickup = chosen && chosen.value === "pickup";
+    pickupBox.hidden = !pickup;
+    addressBox.hidden = pickup;
+    addressBox.querySelector("input").required = !pickup;
+}
+document.querySelectorAll('input[name="delivery"]').forEach((input) => input.addEventListener("change", paintDelivery));
+paintDelivery();
+</script>
+{% endblock %}

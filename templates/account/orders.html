@@ -1,0 +1,18 @@
+{% extends "account/_layout.html" %}
+{% block account %}
+<h1>Заказы</h1>
+<table>
+    <thead><tr><th>Номер</th><th>Дата</th><th>Итого</th><th>Скидка карты</th><th>Статус</th></tr></thead>
+    <tbody>
+    {% for order in orders %}
+    <tr>
+        <td><a href="{{ url_for('account.order', number=order.number) }}">{{ order.number }}</a></td>
+        <td>{{ order.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+        <td>{{ order.total_kop|money }}</td>
+        <td>{{ order.card_discount_kop|money }}</td>
+        <td>{{ order.status }}{% if order.is_demo %} · демо{% endif %}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

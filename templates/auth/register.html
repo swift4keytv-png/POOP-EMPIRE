@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Регистрация{% endblock %}
+{% block content %}
+<section class="wrap narrow">
+    <h1>Регистрация</h1>
+    <form method="post" class="stack">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Имя<input name="name" required></label>
+        <label>Почта<input type="email" name="email" required></label>
+        <label>Телефон<input name="phone"></label>
+        <label>Пароль<input type="password" name="password" required minlength="6"></label>
+        <button class="btn btn-gold" type="submit">Создать кабинет</button>
+    </form>
+</section>
+{% endblock %}

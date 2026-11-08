@@ -1,0 +1,14 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Демонстрационная доставка</h1>
+<p>Случайная пауза между статусами берётся из этого диапазона секунд. Это таймер, не трек курьера.</p>
+<form method="post" class="stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Минимум секунд<input name="low" type="number" value="{{ low }}"></label>
+    <label>Максимум секунд<input name="high" type="number" value="{{ high }}"></label>
+    <label>Ежедневные POOP COINS<input name="coins" type="number" value="{{ coins }}"></label>
+    <label>Номер заказа<input name="number" placeholder="PE-2026-0001"></label>
+    <label>Поставить статус 0–6<input name="stage" type="number" min="0" max="6"></label>
+    <button class="btn btn-gold" type="submit">Сохранить</button>
+</form>
+{% endblock %}

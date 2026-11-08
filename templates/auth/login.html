@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Вход{% endblock %}
+{% block content %}
+<section class="wrap narrow">
+    <h1>Вход в кабинет</h1>
+    <form method="post" class="stack">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="next" value="{{ next }}">
+        <label>Почта<input type="email" name="email" required></label>
+        <label>Пароль<input type="password" name="password" required></label>
+        <button class="btn btn-gold" type="submit">Войти</button>
+    </form>
+    <p><a href="{{ url_for('auth.register') }}">Регистрация</a></p>
+</section>
+{% endblock %}

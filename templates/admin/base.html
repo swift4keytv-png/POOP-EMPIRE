@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}Админка{% endblock %} — POOP EMPIRE</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/empire.css') }}">
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+    <aside>
+        <a href="{{ url_for('admin.dashboard') }}">Сводка</a>
+        <a href="{{ url_for('admin.cards') }}">Какашечные карты</a>
+        <a href="{{ url_for('admin.finance') }}">Финансовая империя</a>
+        <a href="{{ url_for('admin.ads') }}">Реклама Тишки</a>
+        <a href="{{ url_for('admin.cereal') }}">Тишкины хлопья</a>
+        <a href="{{ url_for('admin.partners') }}">Партнёры и фото</a>
+        <a href="{{ url_for('admin.banners') }}">Баннеры</a>
+        <a href="{{ url_for('admin.products') }}">Товары</a>
+        <a href="{{ url_for('admin.orders') }}">Заказы</a>
+        <a href="{{ url_for('admin.reviews') }}">Отзывы</a>
+        <a href="{{ url_for('admin.promos') }}">Промокоды</a>
+        <a href="{{ url_for('admin.news') }}">Новости</a>
+        <a href="{{ url_for('admin.delivery') }}">Доставка</a>
+        <a href="{{ url_for('admin.couriers') }}">Курьеры</a>
+        <a href="{{ url_for('admin.panda_facts') }}">Панда штаба</a>
+        <a href="{{ url_for('admin.wheel') }}">Колесо</a>
+        <a href="{{ url_for('admin.casino_rules') }}">Казино</a>
+        <a href="{{ url_for('admin.factories') }}">Заводы</a>
+        <a href="{{ url_for('admin.holding') }}">Холдинг и биржа</a>
+        <a href="{{ url_for('admin.world') }}">Хроника и авиация</a>
+        <a href="{{ url_for('admin.delivery_sim') }}">Таймер доставки</a>
+        <a href="{{ url_for('admin.donations') }}">Панды</a>
+        <a href="{{ url_for('admin.contacts') }}">Обращения</a>
+        <a href="{{ url_for('admin.users') }}">Пользователи</a>
+        <a href="{{ url_for('main.home') }}">На витрину</a>
+    </aside>
+    <div class="admin-main">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for cat, text in messages %}<p class="flash {{ cat }}">{{ text }}</p>{% endfor %}
+        {% endwith %}
+        {% block admin %}{% endblock %}
+    </div>
+</div>
+</body>
+</html>

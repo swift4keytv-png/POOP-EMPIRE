@@ -1,0 +1,20 @@
+{% if current_user.card %}
+<article class="black-card" data-card-balance="{{ current_user.card.bonus_kop }}">
+    <div class="black-card-top">
+        <strong>POOP EMPIRE BLACK CARD</strong>
+        <span>DEMO</span>
+    </div>
+    <p class="black-number">•••• •••• •••• {{ current_user.card.number.split()[-1] }}</p>
+    <p class="black-balance">{{ current_user.card.bonus_kop|money }}</p>
+    <p class="black-meta">
+        <span>{{ current_user.card.holder_name }}</span>
+        <span>Активна</span>
+        <span>{{ current_user.card.tier.name }} · скидка {{ current_user.card.tier.discount_percent }}%</span>
+    </p>
+    <small>Рублёвые бонусы витрины. Это не банк, не POOP COINS и не инвестиционный счёт.</small>
+    <div class="black-actions">
+        <a class="btn btn-gold" href="{{ url_for('account.card') }}#topup">Пополнить карту</a>
+        <a class="btn" href="{{ url_for('account.card') }}#ops">История операций</a>
+    </div>
+</article>
+{% endif %}

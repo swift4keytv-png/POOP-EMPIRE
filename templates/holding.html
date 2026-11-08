@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}POOP EMPIRE GROUP{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/group.css') }}">{% endblock %}
+{% block content %}
+<section class="wrap universe">
+    <p class="eyebrow">DEMO · холдинг</p>
+    <h1>POOP EMPIRE GROUP</h1>
+    <p>Руслан Триллионеркин — основатель, владелец и генеральный директор. Схема ниже кликабельна. Финансы и численность — демонстрационная легенда, не отчёт.</p>
+    <div class="figures">
+        <article class="figure fiction"><small>DEMO · капитализация PEG</small><strong>{{ (companies[0].cap_rub if companies else 0)|rubbig }}</strong></article>
+        <article class="figure fiction"><small>DEMO · заводов на карте</small><strong>{{ plants }}</strong></article>
+        <article class="figure fiction"><small>DEMO · сотрудников цехов</small><strong>{{ staff }}</strong></article>
+        <article class="figure fiction"><small>Дочерних контуров</small><strong>{{ companies|length }}</strong></article>
+    </div>
+    <div class="org">
+        <a class="org-root" href="{{ url_for('group.company', slug='poop-empire') }}">POOP EMPIRE GROUP<br><small>Руслан Триллионеркин</small></a>
+        <div class="org-row">
+            {% for row in companies if row.slug != 'poop-empire' %}
+            <a class="org-node theme-{{ row.theme }}" href="{{ url_for('group.company', slug=row.slug) }}">
+                <strong>{{ row.ticker }}</strong>
+                <span>{{ row.name }}</span>
+                <small>{{ row.boss }}</small>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    <p><a href="{{ url_for('group.exchange') }}">POOP STOCK EXCHANGE</a> · <a href="{{ url_for('group.timeline') }}">История империи</a> · <a href="{{ url_for('group.dream') }}">Мечта Руслана</a> · <a href="{{ url_for('play.industry') }}">Карта заводов</a></p>
+</section>
+{% endblock %}

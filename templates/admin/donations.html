@@ -1,0 +1,10 @@
+{% extends "admin/base.html" %}
+{% block admin %}
+<h1>Журнал панд</h1>
+<p>Это демонстрационные записи, не платежи.</p>
+<table>
+{% for row in rows %}
+<tr><td>{{ row.donor_name }}</td><td>{{ row.amount_kop|money }}</td><td>{{ row.message }}</td></tr>
+{% endfor %}
+</table>
+{% endblock %}

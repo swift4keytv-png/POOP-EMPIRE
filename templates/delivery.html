@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Доставка{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/group.css') }}">{% endblock %}
+{% block content %}
+<section class="wrap">
+    <h1>Доставка</h1>
+    <table>
+        <thead><tr><th>Способ</th><th>Срок</th><th>Стоимость</th><th>Как это работает</th></tr></thead>
+        <tbody>
+        {% for method in methods %}
+        <tr><td>{{ method.name }}</td><td>{{ method.days }}</td><td>{{ method.fee_kop|money }}</td><td>{{ method.description }}</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <h2>Самовывоз из штаба</h2>
+    <p>Адрес: Максима Горького, 70/1. График: ежедневно 10:00–21:00. Курьер не назначается. Уведомление в кабинете появляется, когда заказ готов к выдаче.</p>
+    <h2>Курьеры POOP DELIVERY</h2>
+    <div class="news-list">
+    {% for row in couriers %}
+        <article class="card">
+            {% if row.photo %}<img src="{{ url_for('static', filename=row.photo) }}" alt="{{ row.name }}" style="width:100%;height:180px;object-fit:contain;background:#120e0b">{% else %}<p style="font-size:48px">{{ row.mark }}</p>{% endif %}
+            <strong>{{ row.name }} «{{ row.nickname }}»</strong>
+            <p>{{ row.specialty }} · {{ row.status }} · {{ row.eta }}</p>
+            <p>Рейтинг {{ row.rating }} · выполнено {{ row.done_count }}</p>
+            <p>{{ row.bio }}</p>
+        </article>
+    {% endfor %}
+    </div>
+    <p>Назначение идёт само на свободного курьера. Карта в заказе, если она есть, показывает таймер, а не GPS.</p>
+</section>
+{% endblock %}

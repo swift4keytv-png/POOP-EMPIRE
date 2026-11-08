@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Сравнение{% endblock %}
+{% block content %}
+<section class="wrap">
+    <h1>Сравнение</h1>
+    {% if items %}
+    <table>
+        <thead><tr><th></th>{% for item in items %}<th>{{ item.name }}</th>{% endfor %}</tr></thead>
+        <tbody>
+            <tr><th>Цена</th>{% for item in items %}<td>{{ item.price_kop|money }}</td>{% endfor %}</tr>
+            <tr><th>Склад</th>{% for item in items %}<td>{{ item.stock }}</td>{% endfor %}</tr>
+            <tr><th>Категория</th>{% for item in items %}<td>{{ item.category.name }}</td>{% endfor %}</tr>
+            <tr><th>Состав</th>{% for item in items %}<td>{{ item.composition }}</td>{% endfor %}</tr>
+            <tr><th></th>{% for item in items %}<td>
+                <form action="{{ url_for('catalog.compare_remove', product_id=item.id) }}" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button class="btn" type="submit">Убрать</button>
+                </form>
+            </td>{% endfor %}</tr>
+        </tbody>
+    </table>
+    {% else %}
+    <p>Добавьте товары кнопкой «Сравнить» в каталоге.</p>
+    {% endif %}
+</section>
+{% endblock %}

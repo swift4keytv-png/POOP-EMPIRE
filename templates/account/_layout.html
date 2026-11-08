@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Кабинет{% endblock %}
+{% block content %}
+<section class="wrap account">
+    <aside>
+        <a href="{{ url_for('account.index') }}">Обзор</a>
+        <a href="{{ url_for('account.orders') }}">Заказы</a>
+        <a href="{{ url_for('account.card') }}">Карта</a>
+        <a href="{{ url_for('account.favorites') }}">Избранное</a>
+        <a href="{{ url_for('account.addresses') }}">Адреса</a>
+        <a href="{{ url_for('account.investments') }}">Инвестиции</a>
+        <form action="{{ url_for('auth.logout') }}" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn" type="submit">Выйти</button></form>
+    </aside>
+    <div>
+        {% block account %}{% endblock %}
+    </div>
+</section>
+{% endblock %}
